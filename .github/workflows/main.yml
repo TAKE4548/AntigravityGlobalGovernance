@@ -141,14 +141,10 @@ jobs:
           EOF
           python generate.py
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-        
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+      - name: Upload to Google Drive
+        uses: adityak74/google-drive-upload-git-action@main
         with:
-          path: './public'
-          
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+          credentials: ${{ secrets.GDRIVE_CREDENTIALS_DATA }} # サービスアカウントのJSON鍵
+          filename: ./public/notebooklm-source.md             # アップロードするファイル
+          folderId: ${{ secrets.GDRIVE_FOLDER_ID }}          # 保存先フォルダのID
+          overwrite: "true"                                   # 同名ファイルがある場合に上書き
