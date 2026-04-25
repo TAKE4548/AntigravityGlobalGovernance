@@ -27,7 +27,7 @@ def validate_links():
             clean_link = link.split("#")[0].strip() # Remove anchors
             
             # Convert URI to Path
-            # Most links will be like c:/Users/...
+            # Most links will be like <USER_HOME>/...
             try:
                 # Handle relative-like paths if any
                 if ":" not in clean_link and not clean_link.startswith("/"):

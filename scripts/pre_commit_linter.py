@@ -2,8 +2,8 @@ import os
 import re
 import sys
 
-# Regex for absolute paths (Windows style)
-ABS_PATH_PATTERN = re.compile(r'C:\\Users\\[\w.-]+', re.IGNORECASE)
+# Regex for absolute paths (Windows style, forward/backward slashes, and root-relative)
+ABS_PATH_PATTERN = re.compile(r'([a-z]:)?[/\\]Users[/\\][\w.-]+', re.IGNORECASE)
 
 # Regex for common API keys/secrets
 SECRET_PATTERNS = {
