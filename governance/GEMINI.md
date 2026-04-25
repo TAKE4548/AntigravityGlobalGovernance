@@ -86,7 +86,10 @@ Agents MUST prioritize reading these workspace-local pointers, which will then d
 ### 6-2. Multi-Repo Isolation & E2E Validation
 - **[MUST [G-6-2]]**: When a task requires modifying multiple repositories simultaneously (e.g., frontend and backend), the agent MUST explicitly state the cross-repo boundary in the `implementation_plan.md` and obtain approval for the combined scope.
 - **[MUST [G-6-3]]**: In cases where the root cause is unclear between frontend and backend, the agent MUST use the `/e2e-debug` workflow to perform systematic isolation before modifying both sides.
-- **[MUST [G-6-4]] Backend as System Master**: The backend repository (`mhws-vision-server`) is the SSoT for system-wide specifications. All functional scenarios MUST be tracked in `docs/system/E2E_BACKLOG.md` within this repository.
+- **[MUST [G-6-4]] SSoT Hierarchy**: 
+    - The **System repository** is the absolute SSoT for cross-repository specifications (API contracts, E2E scenarios). 
+    - If a System repository does not exist, the **backend repository** (`mhws-vision-server`) acts as the SSoT.
+    - All functional scenarios MUST be tracked in `docs/system/E2E_BACKLOG.md` within the master repository.
 - **Artifact Verification**: Every session MUST conclude with the execution of the global artifact linter: `python ${GLOBAL_SCRIPTS}\artifact_linter.py <task_dir>`.
 
 ### 6-3. Pre-Commit Guardrails
