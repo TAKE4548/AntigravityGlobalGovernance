@@ -1,4 +1,4 @@
-name: Build NotebookLM Source
+name: Sync Antigravity Knowledge to Google Drive
 
 on:
   push:
@@ -9,26 +9,14 @@ on:
       - 'skills/**'
       - 'global_workflows/**'
       - 'GEMINI.md'
-      - '.github/workflows/notebooklm-pages.yml'
+      - '.github/workflows/notebooklm-to-gdrive.yml'
   workflow_dispatch:
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
-
 jobs:
-  build-and-deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  build-and-upload:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -39,31 +27,28 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Generate Files
+      - name: Generate Aggregated Markdown
         run: |
           cat << 'EOF' > generate.py
           import os, glob
           from datetime import datetime
 
-          output_dir = "public"
-          os.makedirs(output_dir, exist_ok=True)
-          md_filename = "notebooklm-source.md"
-          output_file = os.path.join(output_dir, md_filename)
+          output_file = "notebooklm-source.md"
 
           with open(output_file, "w", encoding="utf-8") as f:
               f.write("# Antigravity Knowledge Base\n\n")
               f.write(f"**最終更新日時:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
               f.write("---\n\n")
 
-              # 1. ガバナンス
-              f.write("## 1. ガバナンス\n\n")
+              # 1. ガバナンス一覧 (governance/*.md + GEMINI.md)
+              f.write("## 1. ガバナンス一覧\n\n")
               gov_files = glob.glob("governance/*.md")
               if os.path.exists("GEMINI.md"):
                   gov_files.insert(0, "GEMINI.md")
               
               if gov_files:
                   for path in gov_files:
-                      f.write(f"### {os.path.basename(path)}\n\n")
+                      f.write(f"### ファイル: {os.path.basename(path)}\n\n")
                       with open(path, "r", encoding="utf-8") as gf:
                           f.write(gf.read() + "\n\n")
               else:
@@ -76,13 +61,13 @@ jobs:
               skill_files = glob.glob("skills/*/SKILL.md")
               if skill_files:
                   for path in skill_files:
-                      # ディレクトリ名を取得してスキル名とする
+                      # ディレクトリ名（スキル名）を取得
                       skill_name = os.path.basename(os.path.dirname(path))
                       f.write(f"### スキル: {skill_name}\n\n")
                       with open(path, "r", encoding="utf-8") as sf:
                           f.write(sf.read() + "\n\n")
               else:
-                  f.write("スキル定義ファイルが見つかりませんでした。\n\n")
+                  f.write("スキル定義ファイル(SKILL.md)が見つかりませんでした。\n\n")
 
               f.write("---\n\n")
 
@@ -97,54 +82,17 @@ jobs:
                           f.write(wf.read() + "\n\n")
               else:
                   f.write("ワークフローファイルが見つかりませんでした。\n\n")
-
-          # index.html の生成
-          html_file = os.path.join(output_dir, "index.html")
-          with open(html_file, "w", encoding="utf-8") as f:
-              f.write(f"""<!DOCTYPE html>
-          <html lang="ja">
-          <head>
-              <meta charset="UTF-8">
-              <meta name="viewport" content="width=device-width, initial-scale=1.0">
-              <title>Antigravity Knowledge Portal</title>
-              <style>
-                  body {{ font-family: sans-serif; line-height: 1.6; max-width: 800px; margin: 40px auto; padding: 20px; color: #333; }}
-                  .card {{ border: 1px solid #ddd; padding: 20px; border-radius: 8px; background: #f9f9f9; }}
-                  button {{ background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; }}
-                  button:hover {{ background: #0056b3; }}
-                  .url-box {{ background: #eee; padding: 10px; border-radius: 4px; font-family: monospace; word-break: break-all; margin: 10px 0; }}
-              </style>
-          </head>
-          <body>
-              <h1>Antigravity Knowledge Portal</h1>
-              <div class="card">
-                  <p>NotebookLM用の集約ファイルを生成しました。</p>
-                  <p><strong>最終更新:</strong> {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</p>
-                  
-                  <h3>1. 直接ファイルをダウンロード</h3>
-                  <a href="{md_filename}" download><button>Markdownをダウンロード</button></a>
-                  
-                  <h3>2. NotebookLMのソースURLとして使用</h3>
-                  <div class="url-box" id="urlText"></div>
-                  <button onclick="copyUrl()">URLをコピー</button>
-              </div>
-              <script>
-                  const fullUrl = window.location.href + "{md_filename}";
-                  document.getElementById("urlText").innerText = fullUrl;
-                  function copyUrl() {{
-                      navigator.clipboard.writeText(fullUrl);
-                      alert("URLをコピーしました！");
-                  }}
-              </script>
-          </body>
-          </html>""")
           EOF
           python generate.py
 
+      - name: Setup rclone
+        uses: rclone/rclone-action@v1
+
       - name: Upload to Google Drive
-        uses: adityak74/google-drive-upload-git-action@main
-        with:
-          credentials: ${{ secrets.GDRIVE_CREDENTIALS_DATA }} # サービスアカウントのJSON鍵
-          filename: ./public/notebooklm-source.md             # アップロードするファイル
-          folderId: ${{ secrets.GDRIVE_FOLDER_ID }}          # 保存先フォルダのID
-          overwrite: "true"                                   # 同名ファイルがある場合に上書き
+        env:
+          RCLONE_CONFIG_GDRIVE_TYPE: drive
+          RCLONE_CONFIG_GDRIVE_CLIENT_ID: ${{ secrets.GDRIVE_CLIENT_ID }}
+          RCLONE_CONFIG_GDRIVE_CLIENT_SECRET: ${{ secrets.GDRIVE_CLIENT_SECRET }}
+          RCLONE_CONFIG_GDRIVE_TOKEN: '{"access_token":"dummy","token_type":"Bearer","refresh_token":"${{ secrets.GDRIVE_REFRESH_TOKEN }}","expiry":"2023-01-01T00:00:00Z"}'
+        run: |
+          # 指定したフォルダIDに「notebooklm-source.md」という
