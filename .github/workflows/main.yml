@@ -83,11 +83,8 @@ jobs:
           GDRIVE_REFRESH_TOKEN: ${{ secrets.GDRIVE_REFRESH_TOKEN }}
           GDRIVE_FOLDER_ID: ${{ secrets.GDRIVE_FOLDER_ID }}
         run: |
-          # rcloneのインストール
           sudo curl https://rclone.org/install.sh | sudo bash
 
-          # 設定ファイルの作成（環境変数からトークンを組み立て）
-          # NOTE: access_tokenはダミーを入れるとrefresh_tokenを使って自動更新されます
           mkdir -p ~/.config/rclone
           cat << EOF > ~/.config/rclone/rclone.conf
           [gdrive]
@@ -95,9 +92,11 @@ jobs:
           client_id = ${GDRIVE_CLIENT_ID}
           client_secret = ${GDRIVE_CLIENT_SECRET}
           scope = drive
+          # ここでIDをルートとして固定します
+          root_folder_id = ${GDRIVE_FOLDER_ID}
           token = {"access_token":"dummy","token_type":"Bearer","refresh_token":"${GDRIVE_REFRESH_TOKEN}","expiry":"2023-01-01T00:00:00Z"}
           EOF
 
           # アップロード実行
-          # copyto を使うことで、宛先のファイル名を固定して上書きできます
-          rclone copy notebooklm-source.md gdrive:${GDRIVE_FOLDER_ID}/ -v
+          # root_folder_idを指定したため、gdrive: はそのフォルダ自体を指します
+          rclone copyto notebooklm-source.md gdrive:notebooklm-source.md -v
