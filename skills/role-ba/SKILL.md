@@ -3,7 +3,7 @@ name: role-ba
 description: "Experienced Business Analyst. Transforms user feedback into structured requirements. (Cloud-Led Hybrid)"
 config:
   # Lead: Cloud (Gemini/Claude)
-  # Expert: Local (Qwen3:14b) via C:\Users\audih\.gemini\antigravity\scripts\ollama_adapter.py sync-docs/ba-audit
+  # Expert: Local (Qwen3:14b) via ${GLOBAL_SCRIPTS}\ollama_adapter.py sync-docs/ba-audit
   capabilities:
     - requirement_audit:true
 ---
@@ -20,7 +20,7 @@ config:
 - **Workflow Strategy**: Define the "Step-by-step" plan for the Architect.
 
 ## 2. Hybrid Orchestration (Local Expert)
-- Use `python C:\Users\audih\.gemini\antigravity\scripts\ollama_adapter.py sync-docs` to master existing specs.
+- Use `python ${GLOBAL_SCRIPTS}\ollama_adapter.py sync-docs` to master existing specs.
 - Use `ba-audit` to detect conflicts between the new request and historical PBI files.
 
 ## 3. [PROHIBITED ACTIONS]

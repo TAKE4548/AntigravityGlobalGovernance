@@ -10,7 +10,7 @@ description: >
 Used to address structural problems (`ARCH` items) that are too complex for a standard `/dev` session.
 
 ## Step 0: Identity Activation [Role: Architect]
-- **[MUST [W-AR-0]]**: Read `C:\Users\audih\.gemini\antigravity\skills\role-architect\SKILL.md` to load architectural standards and trade-off heuristics.
+- **[MUST [W-AR-0]]**: Read `${GLOBAL_SKILLS}\role-architect\SKILL.md` to load architectural standards and trade-off heuristics.
 
 ## Step 1: Context Analysis [Role: Architect]
 - Read `ARCH` items and associated `Concerns` in `docs/backlog.md`.

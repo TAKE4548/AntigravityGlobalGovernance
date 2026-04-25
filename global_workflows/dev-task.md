@@ -7,7 +7,7 @@ description: "Implementation phase for single atom-sized tasks. Command: /dev-ta
 Use this workflow to implement a single sub-task from the AI Backlog using localized context.
 
 ## Phase 0: Identity Activation [Role: Engineer]
-- **[MUST [W-DT-0]]**: Read `C:\Users\audih\.gemini\antigravity\skills\role-engineer\SKILL.md` to load role-specific instructions and constraints.
+- **[MUST [W-DT-0]]**: Read `${GLOBAL_SKILLS}\role-engineer\SKILL.md` to load role-specific instructions and constraints.
 
 ## Phase 1: Task Selection & Isolation [Role: Engineer]
 - **Select Task**: Load the current PBI's task file from `docs/backlog/task/active/<PBI_ID>.md`.
@@ -22,7 +22,7 @@ Use this workflow to implement a single sub-task from the AI Backlog using local
 ## Phase 2: Implementation (TDD) [Role: Engineer]
 - **Constraint Compliance**: Modify ONLY the files defined in the Task Card.
 - **[必須 [R-EN-1]] 探索の厳禁**: 欠落している型定義を探すためにリポジトリを `grep` することを厳禁とする。
-- **External Discovery**: If type definitions or callers are missing from the Task Card, run `python C:\Users\audih\.gemini\antigravity\scripts\code_analyzer.py <root> <symbol>` instead of manually searching files.
+- **External Discovery**: If type definitions or callers are missing from the Task Card, run `python ${GLOBAL_SCRIPTS}\code_analyzer.py <root> <symbol>` instead of manually searching files.
 - **Escalation**: If the Task Card information is insufficient to implement, STOP and escalate to `/dev-design` for a Task Card update. DO NOT attempt to find the information by reading unrelated files.
 
 ## Phase 3: Verification & Sync [Role: Engineer]

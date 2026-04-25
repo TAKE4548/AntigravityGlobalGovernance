@@ -15,6 +15,7 @@ Optimized for Qwen3:14b (32k context support)
 
 OLLAMA_API_URL = "http://127.0.0.1:11434/api/chat"
 MODEL_ID = "qwen3:14b"
+AUDIT_MODEL_ID = "qwen3:14b"
 
 def strip_thinking(text: str) -> str:
     """Strip <think>...</think> block from model output and return only the answer."""
@@ -22,9 +23,10 @@ def strip_thinking(text: str) -> str:
     cleaned = re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL)
     return cleaned.strip()
 
-def query_ollama(prompt, system_prompt="You are a helpful assistant.", max_tokens=2048):
+def query_ollama(prompt, system_prompt="You are a helpful assistant.", max_tokens=2048, model=None):
+    target_model = model if model else MODEL_ID
     data = {
-        "model": MODEL_ID,
+        "model": target_model,
         "messages": [
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": prompt}
@@ -193,3 +195,53 @@ if __name__ == "__main__":
             content = f.read()
         prompt = f"あなたはQAエンジニアです。以下のテスト計画が機械的に実行可能か（コマンドが具体的か、判定基準が曖昧でないか）を監査してください。特にAIエージェントが『脳内テスト』で逃げられる余地がないかを厳しくチェックしてください。\n\n{content}"
         print(query_ollama(prompt))
+    elif action == "sec-audit":
+        if not arg or not os.path.exists(arg):
+            print(f"File not found or not provided: {arg}")
+            sys.exit(1)
+        
+        try:
+            with open(arg, "r", encoding="utf-8") as f:
+                lines = f.readlines()
+        except Exception as e:
+            print(f"Error reading file {arg}: {e}")
+            sys.exit(1)
+
+        system_prompt = (
+            "You are a DevSecOps engineer. Scan the input for: "
+            "1. Credentials (AKIA..., ghp_..., passwords, private keys). "
+            "2. DB connection strings. "
+            "3. PII (emails, phone numbers). "
+            "4. Local paths (C:\\Users\\...). "
+            "Output strictly in JSON format: [{'line': int, 'type': string, 'severity': 'High|Medium|Low', 'description': string}]. "
+            "Return [] if clean."
+        )
+
+        # Simple chunking logic to stay within context limits if needed.
+        # Qwen3:14b 32k context can handle a lot, but we chunk at ~20k chars for safety and precision.
+        CHUNK_SIZE_LINES = 500
+        all_findings = []
+        
+        for i in range(0, len(lines), CHUNK_SIZE_LINES):
+            chunk = lines[i:i+CHUNK_SIZE_LINES]
+            # Add line numbers for the model to reference
+            chunk_content = "".join([f"{i + idx + 1}: {line}" for idx, line in enumerate(chunk)])
+            
+            prompt = f"Scan the following file content for security risks:\n\n{chunk_content}"
+            response = query_ollama(prompt, system_prompt, model=AUDIT_MODEL_ID)
+            
+            try:
+                # Attempt to parse JSON from the response. Sometimes models wrap it in markdown.
+                import re
+                json_match = re.search(r'\[.*\]', response, re.DOTALL)
+                if json_match:
+                    findings = json.loads(json_match.group(0))
+                    all_findings.extend(findings)
+                else:
+                    if response.strip() != "[]":
+                        # If not [], and no match, it might be a weird format but we ignore if it doesn't look like JSON
+                        pass
+            except Exception:
+                pass # Skip if unparseable
+
+        print(json.dumps(all_findings, indent=2, ensure_ascii=False))

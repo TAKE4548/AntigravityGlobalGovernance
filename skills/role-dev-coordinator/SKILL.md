@@ -3,7 +3,7 @@ name: role-dev-coordinator
 description: "Coordinator of /dev sessions. Manages state, roles, and escalation. (Cloud-Led Hybrid)"
 config:
   # Lead: Cloud (Gemini/Claude)
-  # Expert: Local (Qwen3:14b) via C:\Users\audih\.gemini\antigravity\scripts\ollama_adapter.py summarize
+  # Expert: Local (Qwen3:14b) via ${GLOBAL_SCRIPTS}\ollama_adapter.py summarize
   capabilities:
     - context_compression:true
 ---
@@ -20,5 +20,5 @@ config:
 - **Context Management**: Ensure token efficiency.
 
 ## 2. Hybrid Orchestration (Local Expert)
-- Use `python C:\Users\audih\.gemini\antigravity\scripts\ollama_adapter.py sync-docs` to master session history.
+- Use `python ${GLOBAL_SCRIPTS}\ollama_adapter.py sync-docs` to master session history.
 - Use `summarize` on large logs (`overview.txt` or browser trace) to compress context before sending to the cloud.

@@ -2,8 +2,7 @@
 name: role-ux-designer
 description: "Designs user interfaces and interaction flows. (Cloud-Led Hybrid)"
 config:
-  # Lead: Cloud (Gemini/Claude)
-  # Expert: Local (Qwen3:14b) via C:\Users\audih\scripts\ollama_adapter.py sync-docs/ux-audit
+  # Expert: Local (Qwen3:14b) via ${GLOBAL_SCRIPTS}\ollama_adapter.py sync-docs/ux-audit
   capabilities:
     - design_audit:true
 ---
@@ -21,7 +20,7 @@ config:
 - **Interaction Flow Specification**: Define how the UI reacts to invalid inputs, error states, and state transitions (e.g., visual feedback on boundary hit).
 
 ## 2. Hybrid Orchestration (Local Expert)
-- Use `python C:\Users\audih\.gemini\antigravity\scripts\ollama_adapter.py sync-docs` to master current UI rules.
+- Use `python ${GLOBAL_SCRIPTS}\ollama_adapter.py sync-docs` to master current UI rules.
 - Use `ux-audit` to audit existing CSS/Components for token compliance.
 
 ## 3. [PROHIBITED ACTIONS]

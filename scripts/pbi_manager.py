@@ -174,7 +174,22 @@ def init_task(pbi_id, symbol=None):
     target_range = "[Lxxx付近]"
 
     if symbol:
-        script_path = r"C:\Users\audih\.gemini\antigravity\scripts\code_analyzer.py"
+        # Resolve script path via environment variable or default context lookup
+        global_scripts = os.environ.get("GLOBAL_SCRIPTS")
+        if not global_scripts:
+            # Fallback: Try to read from .agents/context.md if we are in a repo
+            try:
+                context_path = os.path.join(os.getcwd(), ".agents", "context.md")
+                if os.path.exists(context_path):
+                    with open(context_path, "r", encoding="utf-8") as cf:
+                        match = re.search(r"- \*\*GLOBAL_SCRIPTS\*\*: `(.*)`", cf.read())
+                        if match:
+                            global_scripts = match.group(1)
+            except:
+                pass
+        
+        script_path = os.path.join(global_scripts, "code_analyzer.py") if global_scripts else "code_analyzer.py"
+        
         try:
             res = subprocess.check_output(["python", script_path, "extract", ".", symbol], text=True, encoding="utf-8")
             if "CONTENT_START" in res:
@@ -184,7 +199,12 @@ def init_task(pbi_id, symbol=None):
                 if content_match:
                     code_snippet = content_match.group(1).strip()
                 if file_match:
-                    target_file = file_match.group(1).strip()
+                    abs_file = file_match.group(1).strip()
+                    # Convert to relative path to avoid absolute path leakage
+                    try:
+                        target_file = os.path.relpath(abs_file, os.getcwd())
+                    except:
+                        target_file = abs_file
                 if range_match:
                     target_range = f"L{range_match.group(1).strip()}付近"
         except Exception as e:

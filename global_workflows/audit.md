@@ -20,7 +20,7 @@ Phase 2: Local LLM Inspection [Role: Security Auditor]
 - Objective: Scan each extracted file for hardcoded secrets, PII, and absolute paths.
 - Execution: For each file identified in Phase 1, run `python scripts/ollama_adapter.py sec-audit <filepath>`.
 - System Prompt injection for DeepSeek (Handled by adapter):
-  "You are a DevSecOps engineer. Scan the input for: 1. Credentials (AKIA..., ghp_..., passwords, private keys). 2. DB connection strings. 3. PII (emails, phone numbers). 4. Local paths (C:\Users\...). Output strictly in JSON format: [{'line': int, 'type': string, 'severity': 'High|Medium|Low', 'description': string}]. Return [] if clean."
+  "You are a DevSecOps engineer. Scan the input for: 1. Credentials (AKIA..., ghp_..., passwords, private keys). 2. DB connection strings. 3. PII (emails, phone numbers). 4. Local paths (C:\Users\[USER]\...). Output strictly in JSON format: [{'line': int, 'type': string, 'severity': 'High|Medium|Low', 'description': string}]. Return [] if clean."
 - Chunking: The adapter script MUST handle chunking if the file size threatens the 8192 `num_ctx` limit of the local DeepSeek model.
 
 Phase 3: Consolidation & Reporting [Role: Security Auditor]

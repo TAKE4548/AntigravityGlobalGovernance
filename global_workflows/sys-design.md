@@ -11,7 +11,7 @@ description: >
 An interactive workflow for establishing strict interface contracts and sequences, such as frontend-backend integration. This workflow starts from vague user requirements and aims to maximize the resolution of specifications through proactive questioning from the agent.
 
 ## Step 0: Identity Activation [Role: System Architect]
-- **[MUST [W-SD-0]]**: Read `C:\Users\audih\.gemini\antigravity\skills\role-system-architect\SKILL.md` to load cross-repo design and contract protocols.
+- **[MUST [W-SD-0]]**: Read `${GLOBAL_SKILLS}\role-system-architect\SKILL.md` to load cross-repo design and contract protocols.
 
 ## Step 1: Vision Hearing [Role: System Architect]
 - Receive broad goals or user flows from the user.
@@ -23,7 +23,7 @@ An interactive workflow for establishing strict interface contracts and sequence
   2. **API Boundaries & Communication**: Synchronous (REST) or Asynchronous (Event-driven, Polling)?
   3. **Payload Structure**: What specific properties should be included in Request/Response (JSON hierarchy, etc.)?
   4. **Error Handling & Edge Cases**: How to handle validation errors and state transitions during timeouts?
-  5. **Impact on Existing Contracts**: Use `python C:\Users\audih\.gemini\antigravity\scripts\openapi_parser.py <path> list-endpoints` to verify if it breaks existing specifications like `openapi.yaml`.
+  5. **Impact on Existing Contracts**: Use `python ${GLOBAL_SCRIPTS}\openapi_parser.py <path> list-endpoints` to verify if it breaks existing specifications like `openapi.yaml`.
 
 ## Step 3: Draft Presentation & Consensus Building (Loop Point)
 - When the specification resolution is high enough (types, endpoints, and branches are clear), present the system architecture and user flow drafts textually to obtain final user agreement.
@@ -31,7 +31,7 @@ An interactive workflow for establishing strict interface contracts and sequence
 
 ## Step 4: Output Generation & Backlog Entry [Role: System Architect]
 - Once final agreement is obtained, output the `implementation_plan.md` based on the consensus.
-- **[NEW] Backlog Entry**: Run `python C:\Users\audih\.gemini\antigravity\scripts\pbi_manager.py create "<Title>" "ready"` to record the design outcome.
+- **[NEW] Backlog Entry**: Run `python ${GLOBAL_SCRIPTS}\pbi_manager.py create "<Title>" "ready"` to record the design outcome.
 - The plan MUST include:
   - Specific changes to API specifications like `openapi.yaml`.
   - Structure and updates for sequence diagrams in `docs/system/sequences/` (Mermaid integration).

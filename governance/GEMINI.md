@@ -35,19 +35,24 @@ Before every tool call or action, ask yourself:
 
 ## 3. Global Script Execution (CRITICAL)
 
-### 3-1. Absolute Path Requirement
-When executing shared scripts located in the global directory, **you MUST use absolute paths**. The agent's current working directory is always the active workspace root. Relative paths to global scripts will fail.
+### 3-1. Path Abstraction & Variable Resolution
+When executing shared scripts or referencing global files, **you MUST use variables** defined in `.agents/context.md`. The agent MUST resolve these variables (e.g., `${GLOBAL_SCRIPTS}`) before execution.
 
-**Global Script Base Path**: `C:\Users\audih\.gemini\antigravity\scripts\`
+**Standard Variables**:
+- `GLOBAL_ROOT`: The root directory of the AntiGravity global configuration.
+- `GLOBAL_SCRIPTS`: `${GLOBAL_ROOT}\scripts`
+- `GLOBAL_SKILLS`: `${GLOBAL_ROOT}\skills`
+- `GLOBAL_WORKFLOWS`: `${GLOBAL_ROOT}\global_workflows`
+- `GLOBAL_GOVERNANCE`: `${GLOBAL_ROOT}\governance`
 
 **Example Instruction**:
-`python C:\Users\audih\.gemini\antigravity\scripts\ollama_adapter.py summarize`
+`python ${GLOBAL_SCRIPTS}\ollama_adapter.py summarize`
 
 ## 4. Operation & Efficiency
 
 ### 4-1. Hybrid Lead Model (Local-First)
 - Prioritize using the local model (Gemma4/Ollama) for context-heavy tasks (log analysis, file filtering) when input exceeds 32k tokens.
-- **Execution**: Run `C:\Users\audih\.gemini\antigravity\scripts\ollama_adapter.py` for pre-audit or summarization.
+- **Execution**: Run `${GLOBAL_SCRIPTS}\ollama_adapter.py` for pre-audit or summarization.
 
 ### 4-2. Language Policy (STRICT)
 - **Internal Instructions (System)**: All instruction files in `.gemini/antigravity/` (skills, workflows) MUST be in **English**.
@@ -61,7 +66,7 @@ When executing shared scripts located in the global directory, **you MUST use ab
 
 ### 5-1. Governance Directory
 - The global configuration uses a specialized structure for security and accessibility.
-- **Original Source**: `C:\Users\audih\.gemini\antigravity\governance\GEMINI.md`
+- **Original Source**: `${GLOBAL_GOVERNANCE}\GEMINI.md`
 - **Bootstrapping Symlink**: `.gemini/antigravity/GEMINI.md` (Points to the governance original).
 - This structure allows the agent to maintain the constitution via MCP tools while keeping other sensitive directories (like `brain/`) sandboxed.
 
@@ -82,7 +87,12 @@ Agents MUST prioritize reading these workspace-local pointers, which will then d
 - **[MUST [G-6-2]]**: When a task requires modifying multiple repositories simultaneously (e.g., frontend and backend), the agent MUST explicitly state the cross-repo boundary in the `implementation_plan.md` and obtain approval for the combined scope.
 - **[MUST [G-6-3]]**: In cases where the root cause is unclear between frontend and backend, the agent MUST use the `/e2e-debug` workflow to perform systematic isolation before modifying both sides.
 - **[MUST [G-6-4]] Backend as System Master**: The backend repository (`mhws-vision-server`) is the SSoT for system-wide specifications. All functional scenarios MUST be tracked in `docs/system/E2E_BACKLOG.md` within this repository.
-- **Artifact Verification**: Every session MUST conclude with the execution of the global artifact linter: `python C:\Users\audih\.gemini\antigravity\scripts\artifact_linter.py <task_dir>`.
+- **Artifact Verification**: Every session MUST conclude with the execution of the global artifact linter: `python ${GLOBAL_SCRIPTS}\artifact_linter.py <task_dir>`.
+
+### 6-3. Pre-Commit Guardrails
+To prevent the leakage of absolute paths or sensitive information, all commits MUST be performed via the `/commit` workflow.
+- **[MUST [G-6-5]]**: The `/commit` workflow MUST execute the `${GLOBAL_SCRIPTS}\pre_commit_linter.py` before any `git commit` operation.
+- **[MUST [G-6-6]]**: If the linter identifies any High-severity risks (Absolute paths, API keys), the commit MUST be aborted immediately.
 
 ## 7. Token Efficiency Protocols (Anti-Dilution)
 

@@ -8,7 +8,7 @@ description: "Governance & Rule Audit workflow. Used to list current rules and p
 Used when the user wants to review the current set of rules, roles, and workflows to refine their importance (Must/Want).
 
 ## Step 0: Identity Activation [Role: Agent Architect]
-- **[MUST [W-GA-0]]**: Read `C:\Users\audih\.gemini\antigravity\skills\role-agent-architect\SKILL.md` to load governance audit protocols.
+- **[MUST [W-GA-0]]**: Read `${GLOBAL_SKILLS}\role-agent-architect\SKILL.md` to load governance audit protocols.
 
 ## Step 1: Inventory [Role: Agent Architect]
 - Scan all global and local instructions (`GEMINI.md`, `skills/`, `workflows/`).

@@ -8,7 +8,7 @@ description: "Workflow for addressing agent performance issues, rule violations,
 Use this workflow when the agent system is underperforming, breaking rules, or needs new specialized roles.
 
 ## Step 0: Identity Activation [Role: Agent Architect]
-- **[MUST [W-AF-0]]**: Read `C:\Users\audih\.gemini\antigravity\skills\role-agent-architect\SKILL.md` to load governance and meta-programming protocols.
+- **[MUST [W-AF-0]]**: Read `${GLOBAL_SKILLS}\role-agent-architect\SKILL.md` to load governance and meta-programming protocols.
 
 ## Step 1: Intake & Analysis [Role: Agent Architect]
 - **Intake**: Read the provided items.

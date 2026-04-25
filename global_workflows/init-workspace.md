@@ -19,14 +19,14 @@ This workflow initializes a new workspace with AntiGravity governance "pointers"
   This project is governed by the AntiGravity Global Governance standards.
   
   **CRITICAL**: All agents MUST strictly follow the rules defined in the global governance file:
-  - **Global Rules**: `C:\Users\audih\.gemini\antigravity\governance\GEMINI.md`
-  - **Shared Scripts**: `C:\Users\audih\.gemini\antigravity\scripts\` (Use absolute paths ONLY)
+  - **Global Rules**: `${GLOBAL_GOVERNANCE}\GEMINI.md`
+  - **Shared Scripts**: `${GLOBAL_SCRIPTS}\` (Use absolute paths ONLY)
 
   Any local rules in `.agents/` are supplementary and MUST NOT contradict the global governance.
   ```
 
 ## Step 2: Skill Pointer Generation
-- List all global skills in `C:\Users\audih\.gemini\antigravity\skills\`.
+- List all global skills in `${GLOBAL_SKILLS}\`.
 - For each directory `<skill-name>` in the global skills directory:
   - Create directory `.agents/skills/<skill-name>/`.
   - Create `.agents/skills/<skill-name>/SKILL.md` with a pointer to the global definition.
@@ -40,7 +40,7 @@ This workflow initializes a new workspace with AntiGravity governance "pointers"
     
     This is a pointer to the global AntiGravity skill definition.
     For the latest instructions and protocols, you MUST read the global file:
-    `file:///C:/Users/audih/.gemini/antigravity/skills/<skill-name>/SKILL.md`
+    `file:///${GLOBAL_SKILLS}/<skill-name>/SKILL.md`
     ```
 
 ## Step 3: Project Conventions Template

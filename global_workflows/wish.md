@@ -13,7 +13,7 @@ Used when the user proposes new features, improvements, or expresses frustration
 - Leave technical feasibility, code inspection, and architectural design entirely to the Architect in the `/dev` workflow.
 
 ## Step 0: Identity Activation [Role: Business Analyst]
-- **[MUST [W-WH-0]]**: Read `C:\Users\audih\.gemini\antigravity\skills\role-ba\SKILL.md` to load requirement analysis protocols and constraints.
+- **[MUST [W-WH-0]]**: Read `${GLOBAL_SKILLS}\role-ba\SKILL.md` to load requirement analysis protocols and constraints.
 
 ## Step 1: Listen & Record [Role: Business Analyst]
 - **[MUST [W-WH-1]]**: NEVER propose technical solutions or implementation details during the intake phase. Focus 100% on the user's "Pain Point" and "Goal".
@@ -23,7 +23,7 @@ Used when the user proposes new features, improvements, or expresses frustration
 - Once confirmed, determine the **Goal (Requirement)**.
 
 ## Step 2: Backlog Entry [Role: Business Analyst]
-- **Create Entry**: Run `python C:\Users\audih\.gemini\antigravity\scripts\pbi_manager.py create "<Title>" "new"`.
+- **Create Entry**: Run `python ${GLOBAL_SCRIPTS}\pbi_manager.py create "<Title>" "new"`.
 - **Refinement**: Edit the generated file in `docs/backlog/pbi/active/REQ-xxx.md` to add the Categorization (Information / Interaction / Visual) and AC.
 
 ## Step 3: Refinement

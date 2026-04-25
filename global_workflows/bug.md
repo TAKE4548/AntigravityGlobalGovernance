@@ -8,7 +8,7 @@ description: "Triage for reported bugs or unexpected behavior. Determines if it 
 Used when the user reports errors, broken features, or regressions.
 
 ## Step 0: Identity Activation [Role: Hotfix Triager]
-- **[MUST [W-BG-0]]**: Read `C:\Users\audih\.gemini\antigravity\skills\role-hotfix-triager\SKILL.md` to load triage protocols.
+- **[MUST [W-BG-0]]**: Read `${GLOBAL_SKILLS}\role-hotfix-triager\SKILL.md` to load triage protocols.
 
 ## Step 1: Fact Finding [Role: Hotfix Triager]
 - Use `task-hotfix-triage` to collect symptoms and context (Which screen? What action?).
