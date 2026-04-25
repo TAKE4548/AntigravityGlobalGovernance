@@ -37,8 +37,8 @@
 ### ロール定義・スキル (`/skills`)
 各ロールの責任範囲と、特定のタスク（要件定義、TDD実装、コードレビュー等）の具体的な実行手順を定義しています。
 - **アーキテクト系**: `role-architect`, `role-system-architect`, `role-agent-architect`
-- **ビジネス・要件系**: `role-ba`, `task-requirement-analysis`
-- **エンジニア・QA系**: `role-engineer`, `role-tester-reviewer`, `task-tdd-implementation`
+- **ビジネス・要件系**: `role-ba`, `task-requirement-analysis`, `role-incident-analyst`
+- **エンジニア・QA系**: `role-engineer`, `role-tester-reviewer`, `task-tdd-implementation`, `task-incident-analysis`
 - **デザイン・UX系**: `role-ux-designer`, `task-ux-design`
 
 ### 標準ワークフロー (`/workflows`)
@@ -46,7 +46,7 @@
 - **[dev-design.md](file:///workflows/dev-design.md)** / **[dev-task.md](file:///workflows/dev-task.md)**: 標準的な開発サイクル（設計・実装）。
 - **[dev-verify.md](file:///workflows/dev-verify.md)**: 品質保証とクロージャープロセス。
 - **[e2e-debug.md](file:///workflows/e2e-debug.md)**: クロスリポジトリでの複雑なデバッグ。
-- **[bug.md](file:///workflows/bug.md)** / **[hotfix-triage](file:///skills/task-hotfix-triage/SKILL.md)**: 障害報告の仕分けと根本原因分析。
+- **[triage.md](file:///workflows/triage.md)** / **[incident-analysis](file:///skills/task-incident-analysis/SKILL.md)**: 障害報告の深掘り調査と根本原因分析（Read-Only）。
 
 ---
 
