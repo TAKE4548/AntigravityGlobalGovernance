@@ -40,59 +40,64 @@ jobs:
               f.write(f"**最終更新日時:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
               f.write("---\n\n")
 
-              # 1. ガバナンス一覧 (governance/*.md + GEMINI.md)
+              # 1. ガバナンス一覧
               f.write("## 1. ガバナンス一覧\n\n")
-              gov_files = glob.glob("governance/*.md")
+              gov_files = sorted(glob.glob("governance/*.md"))
               if os.path.exists("GEMINI.md"):
                   gov_files.insert(0, "GEMINI.md")
               
-              if gov_files:
-                  for path in gov_files:
-                      f.write(f"### ファイル: {os.path.basename(path)}\n\n")
-                      with open(path, "r", encoding="utf-8") as gf:
-                          f.write(gf.read() + "\n\n")
-              else:
-                  f.write("ガバナンス資料が見つかりませんでした。\n\n")
+              for path in gov_files:
+                  f.write(f"### ファイル: {os.path.basename(path)}\n\n")
+                  with open(path, "r", encoding="utf-8") as gf:
+                      f.write(gf.read() + "\n\n")
 
               f.write("---\n\n")
 
-              # 2. スキル集 (skills/*/SKILL.md)
+              # 2. スキル集
               f.write("## 2. スキル集\n\n")
-              skill_files = glob.glob("skills/*/SKILL.md")
-              if skill_files:
-                  for path in skill_files:
-                      # ディレクトリ名（スキル名）を取得
-                      skill_name = os.path.basename(os.path.dirname(path))
-                      f.write(f"### スキル: {skill_name}\n\n")
-                      with open(path, "r", encoding="utf-8") as sf:
-                          f.write(sf.read() + "\n\n")
-              else:
-                  f.write("スキル定義ファイル(SKILL.md)が見つかりませんでした。\n\n")
+              skill_files = sorted(glob.glob("skills/*/SKILL.md"))
+              for path in skill_files:
+                  skill_name = os.path.basename(os.path.dirname(path))
+                  f.write(f"### スキル: {skill_name}\n\n")
+                  with open(path, "r", encoding="utf-8") as sf:
+                      f.write(sf.read() + "\n\n")
 
               f.write("---\n\n")
 
-              # 3. ワークフロー集 (global_workflows/*.md)
+              # 3. ワークフロー集
               f.write("## 3. ワークフロー集\n\n")
-              workflow_files = glob.glob("global_workflows/*.md")
-              if workflow_files:
-                  for path in workflow_files:
-                      workflow_name = os.path.basename(path).replace(".md", "")
-                      f.write(f"### ワークフロー: {workflow_name}\n\n")
-                      with open(path, "r", encoding="utf-8") as wf:
-                          f.write(wf.read() + "\n\n")
-              else:
-                  f.write("ワークフローファイルが見つかりませんでした。\n\n")
+              workflow_files = sorted(glob.glob("global_workflows/*.md"))
+              for path in workflow_files:
+                  workflow_name = os.path.basename(path).replace(".md", "")
+                  f.write(f"### ワークフロー: {workflow_name}\n\n")
+                  with open(path, "r", encoding="utf-8") as wf:
+                      f.write(wf.read() + "\n\n")
           EOF
           python generate.py
 
-      - name: Setup rclone
-        uses: rclone/rclone-action@v1
-
-      - name: Upload to Google Drive
+      # rcloneをインストールして設定・アップロードを実行
+      - name: Install and Run rclone
         env:
-          RCLONE_CONFIG_GDRIVE_TYPE: drive
-          RCLONE_CONFIG_GDRIVE_CLIENT_ID: ${{ secrets.GDRIVE_CLIENT_ID }}
-          RCLONE_CONFIG_GDRIVE_CLIENT_SECRET: ${{ secrets.GDRIVE_CLIENT_SECRET }}
-          RCLONE_CONFIG_GDRIVE_TOKEN: '{"access_token":"dummy","token_type":"Bearer","refresh_token":"${{ secrets.GDRIVE_REFRESH_TOKEN }}","expiry":"2023-01-01T00:00:00Z"}'
+          GDRIVE_CLIENT_ID: ${{ secrets.GDRIVE_CLIENT_ID }}
+          GDRIVE_CLIENT_SECRET: ${{ secrets.GDRIVE_CLIENT_SECRET }}
+          GDRIVE_REFRESH_TOKEN: ${{ secrets.GDRIVE_REFRESH_TOKEN }}
+          GDRIVE_FOLDER_ID: ${{ secrets.GDRIVE_FOLDER_ID }}
         run: |
-          # 指定したフォルダIDに「notebooklm-source.md」という
+          # rcloneのインストール
+          sudo curl https://rclone.org/install.sh | sudo bash
+
+          # 設定ファイルの作成（環境変数からトークンを組み立て）
+          # NOTE: access_tokenはダミーを入れるとrefresh_tokenを使って自動更新されます
+          mkdir -p ~/.config/rclone
+          cat << EOF > ~/.config/rclone/rclone.conf
+          [gdrive]
+          type = drive
+          client_id = ${GDRIVE_CLIENT_ID}
+          client_secret = ${GDRIVE_CLIENT_SECRET}
+          scope = drive
+          token = {"access_token":"dummy","token_type":"Bearer","refresh_token":"${GDRIVE_REFRESH_TOKEN}","expiry":"2023-01-01T00:00:00Z"}
+          EOF
+
+          # アップロード実行
+          # copyto を使うことで、宛先のファイル名を固定して上書きできます
+          rclone copyto notebooklm-source.md gdrive:${GDRIVE_FOLDER_ID}/notebooklm-source.md -v
