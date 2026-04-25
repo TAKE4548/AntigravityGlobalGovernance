@@ -100,4 +100,4 @@ jobs:
 
           # アップロード実行
           # copyto を使うことで、宛先のファイル名を固定して上書きできます
-          rclone copyto notebooklm-source.md gdrive:${GDRIVE_FOLDER_ID}/notebooklm-source.md -v
+          rclone copy notebooklm-source.md gdrive:${GDRIVE_FOLDER_ID}/ -v
