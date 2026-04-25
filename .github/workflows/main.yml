@@ -5,16 +5,16 @@ on:
     branches:
       - main
     paths:
+      - 'governance/**'
       - 'skills/**'
-      - 'workflows/**'
+      - 'global_workflows/**'
       - 'GEMINI.md'
       - '.github/workflows/notebooklm-pages.yml'
-  workflow_dispatch: # Actionsの画面から手動で実行するためのトリガー
+  workflow_dispatch:
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-  
-# GitHub Pagesへデプロイするための権限設定
+
 permissions:
   contents: read
   pages: write
@@ -39,83 +39,106 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Install dependencies
-        run: pip install PyYAML
-
-      - name: Generate aggregated Markdown
-        # ヒアドキュメント(EOF)を使ってPythonスクリプトを安全に生成・実行します
+      - name: Generate Files
         run: |
           cat << 'EOF' > generate.py
-          import os, yaml, glob
+          import os, glob
           from datetime import datetime
 
           output_dir = "public"
           os.makedirs(output_dir, exist_ok=True)
-          
-          # NotebookLMに読ませるためのファイル
-          output_file = os.path.join(output_dir, "notebooklm-source.md")
+          md_filename = "notebooklm-source.md"
+          output_file = os.path.join(output_dir, md_filename)
 
           with open(output_file, "w", encoding="utf-8") as f:
               f.write("# Antigravity Knowledge Base\n\n")
               f.write(f"**最終更新日時:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
               f.write("---\n\n")
 
-              # 1. ガバナンス (優先度最高のため先頭に配置)
+              # 1. ガバナンス
               f.write("## 1. ガバナンス\n\n")
+              gov_files = glob.glob("governance/*.md")
               if os.path.exists("GEMINI.md"):
-                  with open("GEMINI.md", "r", encoding="utf-8") as g:
-                      f.write(g.read() + "\n\n")
+                  gov_files.insert(0, "GEMINI.md")
+              
+              if gov_files:
+                  for path in gov_files:
+                      f.write(f"### {os.path.basename(path)}\n\n")
+                      with open(path, "r", encoding="utf-8") as gf:
+                          f.write(gf.read() + "\n\n")
               else:
-                  f.write("GEMINI.mdが見つかりませんでした。\n\n")
+                  f.write("ガバナンス資料が見つかりませんでした。\n\n")
 
               f.write("---\n\n")
 
-              # 2. Skills集
-              f.write("## 2. Skills集\n\n")
-              skill_files = glob.glob("skills/*.yaml") + glob.glob("skills/*.yml")
+              # 2. スキル集 (skills/*/SKILL.md)
+              f.write("## 2. スキル集\n\n")
+              skill_files = glob.glob("skills/*/SKILL.md")
               if skill_files:
-                  for filepath in skill_files:
-                      try:
-                          with open(filepath, "r", encoding="utf-8") as sf:
-                              data = yaml.safe_load(sf)
-                              # YAML内に 'name' キーがあればそれを、なければファイル名を使用
-                              skill_name = data.get("name", os.path.basename(filepath)) if isinstance(data, dict) else os.path.basename(filepath)
-                              
-                              f.write(f"### スキル: {skill_name}\n")
-                              
-                              # YAMLの辞書構造をMarkdownの箇条書きに展開
-                              if isinstance(data, dict):
-                                  for key, value in data.items():
-                                      # descriptionや長いテキストは改行を保持
-                                      if isinstance(value, str) and '\n' in value:
-                                          f.write(f"- **{key}**:\n  ```text\n  {value.replace('\n', '\n  ')}\n  ```\n")
-                                      else:
-                                          f.write(f"- **{key}**: {value}\n")
-                              else:
-                                  # 辞書型でない場合はそのままダンプ
-                                  f.write(f"```yaml\n{yaml.dump(data, allow_unicode=True)}```\n")
-                              f.write("\n")
-                      except Exception as e:
-                          f.write(f"### {os.path.basename(filepath)} (Parse Error)\nエラー: {e}\n\n")
+                  for path in skill_files:
+                      # ディレクトリ名を取得してスキル名とする
+                      skill_name = os.path.basename(os.path.dirname(path))
+                      f.write(f"### スキル: {skill_name}\n\n")
+                      with open(path, "r", encoding="utf-8") as sf:
+                          f.write(sf.read() + "\n\n")
               else:
                   f.write("スキル定義ファイルが見つかりませんでした。\n\n")
 
               f.write("---\n\n")
 
-              # 3. ワークフロー集
+              # 3. ワークフロー集 (global_workflows/*.md)
               f.write("## 3. ワークフロー集\n\n")
-              workflow_files = glob.glob("workflows/*.md")
+              workflow_files = glob.glob("global_workflows/*.md")
               if workflow_files:
-                  for filepath in workflow_files:
-                      workflow_name = os.path.basename(filepath).replace(".md", "")
+                  for path in workflow_files:
+                      workflow_name = os.path.basename(path).replace(".md", "")
                       f.write(f"### ワークフロー: {workflow_name}\n\n")
-                      with open(filepath, "r", encoding="utf-8") as wf:
+                      with open(path, "r", encoding="utf-8") as wf:
                           f.write(wf.read() + "\n\n")
               else:
                   f.write("ワークフローファイルが見つかりませんでした。\n\n")
+
+          # index.html の生成
+          html_file = os.path.join(output_dir, "index.html")
+          with open(html_file, "w", encoding="utf-8") as f:
+              f.write(f"""<!DOCTYPE html>
+          <html lang="ja">
+          <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>Antigravity Knowledge Portal</title>
+              <style>
+                  body {{ font-family: sans-serif; line-height: 1.6; max-width: 800px; margin: 40px auto; padding: 20px; color: #333; }}
+                  .card {{ border: 1px solid #ddd; padding: 20px; border-radius: 8px; background: #f9f9f9; }}
+                  button {{ background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; }}
+                  button:hover {{ background: #0056b3; }}
+                  .url-box {{ background: #eee; padding: 10px; border-radius: 4px; font-family: monospace; word-break: break-all; margin: 10px 0; }}
+              </style>
+          </head>
+          <body>
+              <h1>Antigravity Knowledge Portal</h1>
+              <div class="card">
+                  <p>NotebookLM用の集約ファイルを生成しました。</p>
+                  <p><strong>最終更新:</strong> {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</p>
+                  
+                  <h3>1. 直接ファイルをダウンロード</h3>
+                  <a href="{md_filename}" download><button>Markdownをダウンロード</button></a>
+                  
+                  <h3>2. NotebookLMのソースURLとして使用</h3>
+                  <div class="url-box" id="urlText"></div>
+                  <button onclick="copyUrl()">URLをコピー</button>
+              </div>
+              <script>
+                  const fullUrl = window.location.href + "{md_filename}";
+                  document.getElementById("urlText").innerText = fullUrl;
+                  function copyUrl() {{
+                      navigator.clipboard.writeText(fullUrl);
+                      alert("URLをコピーしました！");
+                  }}
+              </script>
+          </body>
+          </html>""")
           EOF
-          
-          # 生成したPythonスクリプトを実行
           python generate.py
 
       - name: Setup Pages
@@ -124,7 +147,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './public' # Markdownが生成されたディレクトリをアップロード
+          path: './public'
           
       - name: Deploy to GitHub Pages
         id: deployment
