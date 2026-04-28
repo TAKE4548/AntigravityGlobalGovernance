@@ -1,5 +1,4 @@
 ---
-name: e2e-debug
 description: >
   Cross-repository debugging workflow.
   Systematically isolates and resolves bugs where the Frontend/Backend boundary is unclear.
@@ -8,44 +7,77 @@ description: >
 
 # E2E Verification & Debugging Workflow (/e2e-debug)
 
-A workflow for systematically resolving cross-repository bugs where the cause (Frontend, Backend, or specification deficiency) is unclear.
+<current_workflow>/e2e-debug</current_workflow>
 
-## Step 0: Prerequisites
-- **[MUST [W-E2E-0]]**: In `docs/system/E2E_BACKLOG.md`, both **Frontend (Stub)** and **Backend (Driver)** Gates for the target scenario must be checked.
-- **Strictly Prohibited**: Do not start integration (real-device verification) unless both Gates are checked. If incomplete, prioritize unit development in the respective repository.
+Systematically resolving cross-repository bugs through isolation.
 
----
+## Step 0: Prerequisites [Role: Tester/Reviewer]
+
+<current_step>Step 0: Prerequisites</current_step>
+<workflow_instructions>
+1. Check `E2E_BACKLOG.md` for Gate completion (Stub/Driver).
+2. Halt if unit development is incomplete.
+</workflow_instructions>
+
+- **Readiness**: Ensure both sides of the contract are ready for integration.
 
 ## Step 1: Isolation & Evidence [Role: Tester/Reviewer]
-- **[MUST [W-E2E-1]]**: Read `${GLOBAL_SKILLS}\role-tester-reviewer\SKILL.md` to load verification protocols.
-- **Environment Setup**: Start both `mhws-vision-client` and `mhws-vision-server` in the development environment.
-- **Browser Reproduction**: Reproduce the issue in the browser and capture API Request/Response (JSON) from the Network tab.
-- **Evidence Collection**: Collect server-side logs and browser console logs.
+
+<current_step>Step 1: Isolation & Evidence</current_step>
+<workflow_instructions>
+1. Start client and server environments.
+2. Reproduce issue and capture API Request/Response (JSON).
+3. Record logs in the `<execution_evidence>` tag.
+</workflow_instructions>
+
+- **Evidence Collection**: Gather objective proof from browser and server.
 
 ## Step 2: Classification [Role: Architect]
-- **[MUST [W-E2E-2]]**: Read `${GLOBAL_SKILLS}\role-architect\SKILL.md` to prepare for architectural analysis.
-Based on the collected evidence, classify the issue into one of the following:
-1.  **Unit Bug**: API Request/Response complies with specifications (`openapi.yaml`), but the UI fails or the Backend crashes internally.
-    - **Action**: Transition to `/dev` workflows in the respective repository.
-2.  **Contract Bug (Specification Inconsistency)**: Frontend request format or Backend response format contradicts `openapi.yaml` or sequence diagrams.
-    - **Action**: **[STOP] Immediately cease E2E verification and proceed to Step 3.**
 
-## Step 3: Specification Reconstruction (Lead: Backend) [Role: System Architect]
-- **[MUST [W-E2E-3]]**: Read `${GLOBAL_SKILLS}\role-system-architect\SKILL.md` to handle cross-repo contract design.
-In case of a Contract Bug, perform the following in the **Backend repository**, which holds system authority:
-- Update documents under `docs/system/` (`openapi.yaml`, sequences, etc.).
-- Create specific backlog items (tasks) for each repository based on the fix.
-- Present the plan to the user and **obtain approval**.
+<current_step>Step 2: Classification</current_step>
+<workflow_instructions>
+1. Use the `<thinking>` tag to analyze evidence.
+2. Classify as Unit Bug or Contract Bug.
+</workflow_instructions>
+
+- **Classification**: Determine if the error is implementation-specific or contract-level.
+
+## Step 3: Specification Reconstruction [Role: System Architect]
+
+<current_step>Step 3: Specification Reconstruction</current_step>
+<workflow_instructions>
+1. In the Backend repo, update `docs/system/` documents.
+2. Create cross-repo tasks and obtain user approval.
+3. Record decisions in the `<design_decisions>` tag.
+</workflow_instructions>
+
+- **Contract Fix**: Re-align FE/BE expectations via SSoT updates.
 
 ## Step 4: Task Distribution & Unit Re-fix [Role: Engineer]
-- **[MUST [W-E2E-4]]**: Read `${GLOBAL_SKILLS}\role-engineer\SKILL.md` to load implementation constraints.
-Process tasks in each repository based on the approved specifications.
-- **[MUST]**: Do not re-integrate until Step 0 (Gate check) is cleared again.
+
+<current_step>Step 4: Task Distribution & Unit Re-fix</current_step>
+<workflow_instructions>
+1. Process tasks in respective repositories.
+2. Update Gates in `E2E_BACKLOG.md`.
+</workflow_instructions>
+
+- **Execution**: Apply fixes based on the reconstructed specification.
 
 ## Step 5: Verification (Re-integration) [Role: Tester]
-- Once all Gates pass again, resume real-device integration.
-- Update the Status in `E2E_BACKLOG.md` to `[VERIFIED]`.
+
+<current_step>Step 5: Verification (Re-integration)</current_step>
+<workflow_instructions>
+1. Resume integration testing and update status to `[VERIFIED]`.
+</workflow_instructions>
+
+- **Verification**: Confirm the fix in a live integrated environment.
 
 ## Step 6: Final Reporting [Role: Agent Architect]
-- **[MUST [W-E2E-6]]**: Read `${GLOBAL_SKILLS}\role-agent-architect\SKILL.md` to conduct the final governance audit.
-- Run `artifact_linter.py` to verify quality, then submit the walkthrough.
+
+<current_step>Step 6: Final Reporting</current_step>
+<workflow_instructions>
+1. Run `artifact_linter.py`.
+2. Present the walkthrough in Japanese.
+</workflow_instructions>
+
+- **Report**: Complete the E2E debug session.

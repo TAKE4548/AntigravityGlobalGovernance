@@ -1,5 +1,4 @@
 ---
-name: sys-verify
 description: >
   Integrated system verification and cross-repo E2E testing workflow.
   Command: /sys-verify
@@ -7,26 +6,57 @@ description: >
 
 # System Verification Workflow (/sys-verify)
 
-Final verification to ensure the entire system meets the Acceptance Criteria (AC) of the master REQ after FE/BE implementations are complete.
+<current_workflow>/sys-verify</current_workflow>
+
+Final verification to ensure the entire system meets the AC of the master REQ.
 
 ## Step 0: Identity Activation [Role: System Architect]
-- **[MUST [W-SV-0]]**: Read `${GLOBAL_SKILLS}\role-system-architect\SKILL.md`.
 
-## Step 1: Autonomous Readiness Check
-- [STRICT] Check the status of child PBIs in FE and BE repositories.
-- **Command**: `python ${GLOBAL_SCRIPTS}\pbi_manager.py --action check-status --id REQ-[REQ_ID] --repos ../frontend,../backend`
-- **Rule**: If either status is NOT `done`, halt and report in Japanese: "[REQ_ID] の検証を開始できません。FEまたはBEの実装が完了（done）していません。"
+<current_step>Step 0: Identity Activation</current_step>
+<workflow_instructions>
+1. Read `${GLOBAL_SKILLS}\role-system-architect\SKILL.md`.
+2. Prepare for integrated verification.
+</workflow_instructions>
 
-## Step 2: Static Integration Audit
-- Use `scout_adapter.py` to verify that the FE/BE implementation matches the SSoT.
-  - **Command**: `python ${GLOBAL_SCRIPTS}\scout_adapter.py --mode outline --target ../frontend/src/api,../backend/src/controllers`
-- Verify that fetch processes and controller interfaces are perfectly aligned with `openapi.yaml`.
+- **[MUST [W-SV-0]]**: Activate System Architect identity.
 
-## Step 3: Dynamic E2E Verification
-- Execute integrated test scripts (e.g., Playwright) if defined in the System repo.
-- **Evidence**: Attach recordings or logs from the E2E execution.
+## Step 1: Autonomous Readiness Check [Role: System Architect]
 
-## Step 4: Strict AC Compliance & Closure
-- **[MUST [G-02]] Compliance Table**: Output a Markdown checkbox table in Japanese within `walkthrough.md` verifying all ACs from the master REQ.
-- If all tests pass, update the master PBI status to `done`.
-- Announce completion in Japanese.
+<current_step>Step 1: Autonomous Readiness Check</current_step>
+<workflow_instructions>
+1. Run `pbi_manager.py check-status` across FE/BE repositories.
+2. Halt if implementation is not `done`.
+</workflow_instructions>
+
+- **Readiness Check**: Verify that all child PBIs are complete.
+
+## Step 2: Static Integration Audit [Role: System Architect]
+
+<current_step>Step 2: Static Integration Audit</current_step>
+<workflow_instructions>
+1. Use `scout_adapter.py` to verify that FE/BE implementation matches the SSoT.
+2. Analyze controller interfaces and API alignment in the `<thinking>` tag.
+</workflow_instructions>
+
+- **Integration Audit**: Verify alignment of fetch processes and controllers with `openapi.yaml`.
+
+## Step 3: Dynamic E2E Verification [Role: System Architect]
+
+<current_step>Step 3: Dynamic E2E Verification</current_step>
+<workflow_instructions>
+1. Execute integrated test scripts (e.g., Playwright).
+2. Collect recordings or logs and isolate them in the `<execution_evidence>` tag.
+</workflow_instructions>
+
+- **E2E Execution**: Run dynamic verification of the entire system.
+
+## Step 4: Strict AC Compliance & Closure [Role: System Architect]
+
+<current_step>Step 4: Strict AC Compliance & Closure</current_step>
+<workflow_instructions>
+1. Generate the mandatory AC compliance table in `walkthrough.md`.
+2. Update master PBI status to `done` and announce completion in Japanese.
+</workflow_instructions>
+
+- **Compliance Table**: Verify all master ACs.
+- **Closure**: Archive the master REQ and report success.

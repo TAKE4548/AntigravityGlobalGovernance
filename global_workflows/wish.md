@@ -1,31 +1,56 @@
 ---
-name: wish
 description: "Intake for new feature requests or usability improvements. Focus on hearing and deep-diving before dev. Command: /wish"
 ---
 
 # Feature Request Workflow (/wish)
 
-Used when the user proposes new features, improvements, or expresses frustration with current functionality.
+<current_workflow>/wish</current_workflow>
 
-## Planning Mode Constraints [CRITICAL]
-- **NO IMPLEMENTATION PLANS**: You represent the Business Analyst role. You must NEVER create an `implementation_plan.md` during this workflow.
-- **NO CODE ANALYSIS**: Focus strictly on the "Requirement" (What is needed), not the "Solution" (How to code it).
-- Leave technical feasibility, code inspection, and architectural design entirely to the Architect in the `/dev` workflow.
+Used for capturing new features, improvements, or user feedback.
+
+<prohibited_actions>
+- **NO IMPLEMENTATION PLANS**: temsil represent the Business Analyst role.
+- **NO CODE ANALYSIS**: Focus strictly on requirements.
+</prohibited_actions>
 
 ## Step 0: Identity Activation [Role: Business Analyst]
-- **[MUST [W-WH-0]]**: Read `${GLOBAL_SKILLS}\role-ba\SKILL.md` to load requirement analysis protocols and constraints.
+
+<current_step>Step 0: Identity Activation</current_step>
+<workflow_instructions>
+1. Read `${GLOBAL_SKILLS}\role-ba\SKILL.md`.
+2. Initialize requirement mapping in the `<thinking>` tag in English.
+</workflow_instructions>
+
+- **[MUST [W-WH-0]]**: Activate Business Analyst identity.
 
 ## Step 1: Listen & Record [Role: Business Analyst]
-- **[MUST [W-WH-1]]**: NEVER propose technical solutions or implementation details during the intake phase. Focus 100% on the user's "Pain Point" and "Goal".
-- Use `task-requirement-analysis` to capture the **Surface** statement.
-- **MANDATORY**: Ask clarifying questions to find the **Symptom** and **Root Cause**. Do NOT jump to conclusions or output the final template if the user only provided a "solution".
-- If the user has not confirmed the Root Cause, you MUST end your turn after asking a question.
-- Once confirmed, determine the **Goal (Requirement)**.
+
+<current_step>Step 1: Listen & Record</current_step>
+<workflow_instructions>
+1. Capture the **Surface** statement in the `<requirement_source>` tag.
+2. Ask questions to identify **Symptom** and **Root Cause**.
+3. [MANDATORY] End turn if intent is not confirmed.
+</workflow_instructions>
+
+- **Intake**: Focus 100% on Pain Points and Goals.
+- **Discovery**: Use `task-requirement-analysis` to refine the requirement.
 
 ## Step 2: Backlog Entry [Role: Business Analyst]
-- **Create Entry**: Run `python ${GLOBAL_SCRIPTS}\pbi_manager.py create "<Title>" "new"`.
-- **Refinement**: Edit the generated file in `docs/backlog/pbi/active/REQ-xxx.md` to add the Categorization (Information / Interaction / Visual) and AC.
 
-## Step 3: Refinement
-- If the goal is clear and the user agrees, update the `status` to `ready` in the PBI file.
-- Invite the user in Japanese to start the `/dev-design` workflow when they are ready.
+<current_step>Step 2: Backlog Entry</current_step>
+<workflow_instructions>
+1. Run `pbi_manager.py create` to generate the entry.
+2. Categorize (Info/Interaction/Visual) and define AC.
+</workflow_instructions>
+
+- **Creation**: Register the new PBI in the active backlog.
+
+## Step 3: Refinement [Role: Business Analyst]
+
+<current_step>Step 3: Refinement</current_step>
+<workflow_instructions>
+1. Update status to `ready` if goal is clear and user agrees.
+2. Invite the user to start `/dev-design` in Japanese.
+</workflow_instructions>
+
+- **Announcement**: Hand off the refined requirement for design.

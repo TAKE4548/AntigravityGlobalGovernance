@@ -4,27 +4,57 @@ description: "Implementation phase for single atom-sized tasks. Command: /dev-ta
 
 # Development Workflow: Task Implementation Phase (/dev-task)
 
+<current_workflow>/dev-task</current_workflow>
+
 Use this workflow to implement a single sub-task from the AI Backlog using localized context.
 
 ## Phase 0: Identity Activation [Role: Engineer]
-- **[MUST [W-DT-0]]**: Read `${GLOBAL_SKILLS}\role-engineer\SKILL.md` to load role-specific instructions and constraints.
+
+<current_step>Phase 0: Identity Activation</current_step>
+<workflow_instructions>
+1. Read `${GLOBAL_SKILLS}\role-engineer\SKILL.md` to load role instructions.
+2. Initialize implementation analysis in the `<thinking>` tag.
+</workflow_instructions>
+
+- **[MUST [W-DT-0]]**: Load role-specific instructions and constraints.
 
 ## Phase 1: Task Selection & Isolation [Role: Engineer]
-- **Select Task**: Load the current PBI's task file from `docs/backlog/task/active/<PBI_ID>.md`.
-    - **[MANDATORY TURN-END]**: Present the pending tasks to the user and ask which one to pick.
+
+<current_step>Phase 1: Task Selection & Isolation</current_step>
+<workflow_instructions>
+1. Present pending tasks to the user and ask for selection.
+2. Load the Task Card into the `<target_task_card>` tag.
+3. Perform a mandatory context reset.
+</workflow_instructions>
+
+- **Select Task**: Load the current PBI's task file.
+    - **[MANDATORY TURN-END]**: Ask the user which task to pick.
 - **Hermetic Rule (密封ルール)**:
-    - **[MANDATORY RESET]**: Ensure a fresh session or cleared context of unrelated PBI history.
     - **[READ ONLY]**: Read ONLY the specific Task Card file.
-    - **[PROHIBITED]**: **DO NOT read `docs/design/PBI-xxx.md` or other spec files.** All necessary context MUST be in the task card.
-    - **[必須] コンテキスト分離**: タスクカードに記載された情報のみを前提とし、過去の履歴や広範な探索を排除する。
-    - **Target Access**: Open the target files directly using the paths provided in the Task Card.
+    - **[PROHIBITED]**: DO NOT read PBI specs or unrelated files.
+    - **Isolation**: Use strictly the information within the `<target_task_card>`.
 
 ## Phase 2: Implementation (TDD) [Role: Engineer]
-- **Constraint Compliance**: Modify ONLY the files defined in the Task Card.
-- **[必須 [R-EN-1]] 探索の厳禁**: 欠落している型定義を探すためにリポジトリを `grep` することを厳禁とする。
-- **External Discovery**: If type definitions or callers are missing from the Task Card, run `python ${GLOBAL_SCRIPTS}\code_analyzer.py <root> <symbol>` instead of manually searching files.
-- **Escalation**: If the Task Card information is insufficient to implement, STOP and escalate to `/dev-design` for a Task Card update. DO NOT attempt to find the information by reading unrelated files.
+
+<current_step>Phase 2: Implementation (TDD)</current_step>
+<workflow_instructions>
+1. Modify ONLY the files defined in the Task Card.
+2. Follow the Red-Green-Refactor cycle.
+3. Use `code_analyzer.py` if symbol definitions are missing from the Task Card.
+</workflow_instructions>
+
+- **Constraint Compliance**: Modify ONLY specified files.
+- **[PROHIBITED]**: NEVER use `grep` or `read_file` for exploration.
+- **Escalation**: If info is insufficient, STOP and escalate to `/dev-design`.
 
 ## Phase 3: Verification & Sync [Role: Engineer]
-- **Verify**: Run the specific unit tests for this task.
-- **Update Status**: instructions for the user to proceed to next task or `/dev-verify`.
+
+<current_step>Phase 3: Verification & Sync</current_step>
+<workflow_instructions>
+1. Run unit tests for the current task.
+2. Isolate test results in the `<execution_evidence>` tag.
+3. Update status and instruct the user to proceed.
+</workflow_instructions>
+
+- **Verify**: Run unit tests.
+- **Update Status**: Prepare for the next task or `/dev-verify`.

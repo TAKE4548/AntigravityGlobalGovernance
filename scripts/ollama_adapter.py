@@ -72,44 +72,61 @@ def summarize_file(file_path):
         content = content[:MAX_CHARS] + "\n... (omitted due to length)"
     
     prompt = (
+        "<assigned_role>Expert Python Engineer (Monter Hunter Equipment Manager Specialist)</assigned_role>\n"
+        "<instruction_set>\n"
         "Analyze the following source code for a developer. "
         "Summarize its purpose, core logic, and key data structures. "
         "Point out any technical debt or potential improvements. "
-        "Respond in Japanese with professional tone.\n\n"
-        f"{content}"
+        "Respond in Japanese with professional tone.\n"
+        "</instruction_set>\n\n"
+        "<source_code>\n"
+        f"{content}\n"
+        "</source_code>"
     )
-    system_message = (
-        "You are an expert Python engineer specialized in Monster Hunter equipment management systems. "
-        "Provide a high-quality, technical summary."
-    )
+    system_message = "You are an expert technical auditor."
     
     return query_ollama(prompt, system_message)
 
 def audit_requirements(content):
     prompt = (
+        "<assigned_role>Expert Business Analyst</assigned_role>\n"
+        "<instruction_set>\n"
         "Analyze the following requirement against the project's historical context. "
-        "Search for logical contradictions, missing edge cases, or overlaps with existing features. "
-        f"Requirement Text:\n{content}"
+        "Search for logical contradictions, missing edge cases, or overlaps with existing features.\n"
+        "</instruction_set>\n\n"
+        "<target_content>\n"
+        f"{content}\n"
+        "</target_content>"
     )
-    system = "You are an expert Business Analyst for a Monster Hunter equipment manager app. Focus on logical consistency."
+    system = "Focus on logical consistency and SSoT integrity."
     return query_ollama(prompt, system)
 
 def audit_design(content):
     prompt = (
-        "Check this UI component or CSS against the project's v15 HUD design tokens. "
-        "Point out any deviations from standard colors, typography, or spacing patterns. "
-        f"Input:\n{content}"
+        "<assigned_role>Expert UX Designer</assigned_role>\n"
+        "<instruction_set>\n"
+        "Check this UI component or CSS against the project's design tokens. "
+        "Point out any deviations from standard colors, typography, or spacing patterns.\n"
+        "</instruction_set>\n\n"
+        "<target_content>\n"
+        f"{content}\n"
+        "</target_content>"
     )
-    system = "You are an expert UX Designer specializing in high-end game HUDs. Focus on design system compliance."
+    system = "Focus on design system compliance and visual hierarchy."
     return query_ollama(prompt, system)
 
 def audit_structure(content):
     prompt = (
+        "<assigned_role>Master Architect</assigned_role>\n"
+        "<instruction_set>\n"
         "Audit the following code for architectural violations. "
-        "Look for hardcoded state, leaking abstractions, or violations of the State/Atom/Dialog separation. "
-        f"Source Code:\n{content}"
+        "Look for hardcoded state, leaking abstractions, or violations of the State/Atom/Dialog separation.\n"
+        "</instruction_set>\n\n"
+        "<source_code>\n"
+        f"{content}\n"
+        "</source_code>"
     )
-    system = "You are a Master Architect. Focus on structural integrity and technical debt."
+    system = "Focus on structural integrity and technical debt."
     return query_ollama(prompt, system)
 
 def sync_docs(docs_dir="docs"):
@@ -159,10 +176,21 @@ def synthesize_context(raw_outputs):
     return query_ollama(prompt, system)
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
+    if len(sys.argv) < 2 or sys.argv[1] in ["--help", "-h"]:
+        print("AntiGravity Ollama Adapter (Local-First Model Support)")
         print("Usage: python ollama_adapter.py <action> [args]")
-        print("Actions: summarize <path>, query <prompt>, ba-audit <text>, ux-audit <text>, arch-audit <text>, sync-docs [dir], synthesize <raw_text>")
-        sys.exit(1)
+        print("\nActions:")
+        print("  summarize <path>             Summarize a source code file or long log.")
+        print("  query \"<prompt>\"             General purpose query to the local model.")
+        print("  ba-audit \"<text>\"            Audit requirements for consistency/edge cases.")
+        print("  ux-audit \"<text>\"            Audit UI/CSS against design tokens.")
+        print("  arch-audit \"<text>\"          Audit code for architectural violations.")
+        print("  sync-docs [dir]              Ingest and summarize all documentation files.")
+        print("  engineer-audit <task_file>   Check if a task card is self-contained and implementable.")
+        print("  qa-audit <test_plan>         Check if a test plan is executable and non-ambiguous.")
+        print("  sec-audit <path>             Scan for credentials, PII, or absolute paths (JSON output).")
+        print("  synthesize \"<raw_text>\"      Synthesize multiple analysis results into a context snippet.")
+        sys.exit(0)
     
     action = sys.argv[1]
     arg = sys.argv[2] if len(sys.argv) > 2 else ""
@@ -185,7 +213,16 @@ if __name__ == "__main__":
             sys.exit(1)
         with open(arg, "r", encoding="utf-8") as f:
             content = f.read()
-        prompt = f"あなたはシニアエンジニアです。以下のタスクカードの情報（特にスニペット）だけで、他を検索せずに実装が可能か、型定義が不足していないかを極めて厳しくチェックしてください。不足があれば具体的な『シンボル名』を指摘してください。\n\n{content}"
+        prompt = (
+            "<assigned_role>Senior Engineer</assigned_role>\n"
+            "<instruction_set>\n"
+            "以下のタスクカードの情報（特にスニペット）だけで、他を検索せずに実装が可能か、型定義が不足していないかを極めて厳しくチェックしてください。\n"
+            "不足があれば具体的な『シンボル名』を指摘してください。\n"
+            "</instruction_set>\n\n"
+            "<target_content>\n"
+            f"{content}\n"
+            "</target_content>"
+        )
         print(query_ollama(prompt))
     elif action == "qa-audit":
         if not arg:
@@ -193,7 +230,16 @@ if __name__ == "__main__":
             sys.exit(1)
         with open(arg, "r", encoding="utf-8") as f:
             content = f.read()
-        prompt = f"あなたはQAエンジニアです。以下のテスト計画が機械的に実行可能か（コマンドが具体的か、判定基準が曖昧でないか）を監査してください。特にAIエージェントが『脳内テスト』で逃げられる余地がないかを厳しくチェックしてください。\n\n{content}"
+        prompt = (
+            "<assigned_role>QA Engineer</assigned_role>\n"
+            "<instruction_set>\n"
+            "以下のテスト計画が機械的に実行可能か（コマンドが具体的か、判定基準が曖昧でないか）を監査してください。\n"
+            "特にAIエージェントが『脳内テスト』で逃げられる余地がないかを厳しくチェックしてください。\n"
+            "</instruction_set>\n\n"
+            "<target_content>\n"
+            f"{content}\n"
+            "</target_content>"
+        )
         print(query_ollama(prompt))
     elif action == "sec-audit":
         if not arg or not os.path.exists(arg):

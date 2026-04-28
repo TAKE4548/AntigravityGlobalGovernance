@@ -218,6 +218,7 @@ def init_task(pbi_id, symbol=None):
 - **行番号目安**: {target_range}
 
 ## 2. 密閉コンテキスト (Hermetic Context)
+<hermetic_context>
 ※エンジニアは、以下のスニペットのみを情報源として実装すること。
 
 ### 2.1 必須の型定義
@@ -229,6 +230,7 @@ def init_task(pbi_id, symbol=None):
 ```python
 {code_snippet}
 ```
+</hermetic_context>
 
 ## 3. 実装要件 (Implementation Logic)
 - [ ] [具体的なロジック変更手順を箇条書きで記載]
@@ -267,9 +269,20 @@ def init_test_plan(pbi_id):
 
 if __name__ == "__main__":
     ensure_dirs()
-    if len(sys.argv) < 2:
-        print("Usage: pbi_manager.py <command> [args]")
-        sys.exit(1)
+    if len(sys.argv) < 2 or sys.argv[1] in ["--help", "-h"]:
+        print("AntiGravity PBI Manager")
+        print("Usage: python pbi_manager.py <command> [args]")
+        print("\nCommands:")
+        print("  shard <file> [prefix]        Shard a consolidated backlog file into individual PBIs.")
+        print("  migrate-tasks [file]         Migrate .ai-backlog.md to task/active/REQ-xxx.md.")
+        print("  list                         List all active PBIs.")
+        print("  list-ready                   List only PBIs with 'ready' status.")
+        print("  list-in-progress             List only PBIs with 'in-progress' status.")
+        print("  create \"<Title>\" [status]    Create a new PBI with the next available ID.")
+        print("  init-task <REQ_ID> [--symbol <s>] Initialize a task card, optionally extracting code for a symbol.")
+        print("  init-test-plan <REQ_ID>      Initialize an executable test plan for the PBI.")
+        print("  archive <REQ_ID>             Move a PBI and its task to the archive.")
+        sys.exit(0)
     
     cmd = sys.argv[1]
     if cmd == "shard":
@@ -291,6 +304,9 @@ if __name__ == "__main__":
             if len(sys.argv) > idx + 1:
                 symbol = sys.argv[idx+1]
         init_task(sys.argv[2], symbol)
+    elif cmd == "create":
+        status = sys.argv[3] if len(sys.argv) > 3 else "new"
+        create_pbi(sys.argv[2], status)
     elif cmd == "init-test-plan":
         init_test_plan(sys.argv[2])
 

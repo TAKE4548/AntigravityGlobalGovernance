@@ -100,8 +100,9 @@ To prevent the leakage of absolute paths or sensitive information, all commits M
 ## 7. Token Efficiency Protocols (Anti-Dilution)
 
 ### 7-1. Script-First Discovery
-- **[MUST [G-7-1]]**: Agents MUST use designated scripts in `scripts/` (e.g., `pbi_manager.py`, `code_analyzer.py`) for information gathering before resorting to broad `read_file` or `grep`.
+- **[MUST [G-7-1]]**: Agents MUST use designated scripts in `scripts/` (e.g., `pbi_manager.py`, `code_analyzer.py`) for information gathering. Structural analysis via scripts MUST precede manual `grep` or `view_file` for logic tracing.
 - **[MUST [G-7-2]]**: Manual scanning of large directories or multiple documentation files is prohibited if a specialized tool can provide a filtered summary.
+- **[MUST [G-7-8]] (Turn Efficiency)**: Agents MUST NOT waste turns on "Discovery" of known tools. Running `--help` or reading the source code of scripts listed in the role's handbook is a violation. If a script's usage is unknown, use the Handbook in `SKILL.md`.
 
 ### 7-2. Task Encapsulation (Hermetic Implementation)
 - **[MUST [G-7-3]]**: In `/dev-design`, the resulting `task.md` (Task Card) MUST encapsulate all necessary technical context, including type definitions, API snippets, and logic constraints.
@@ -110,3 +111,43 @@ To prevent the leakage of absolute paths or sensitive information, all commits M
 ### 7-4. Absolute Tool Efficiency
 - **[MUST [G-7-6]] (Tool Integrity)**: NEVER use generic commands (e.g., `run_command` with `Get-Content`, `cat`, `type`) for reading file contents when dedicated file tools (`mcp_filesystem_read_text_file`, `view_file`) are available.
 - **[MUST [G-7-7]] (No Loophole Bypassing)**: Using a different tool to bypass restrictions imposed on another tool (e.g., bypassing `read_file` restrictions via `run_command`) is a severe governance violation.
+
+## 8. AntiGravity XML Structured Protocol
+
+To maximize compliance and accuracy, especially for local models, all system instructions and workflow states MUST be encapsulated in designated XML tags.
+
+### 8-1. Core Identity Tags (Mandatory in SKILL.md)
+- `<agent_identity>`: Defines the current role and expertise.
+- `<core_responsibilities>`: High-level primary objectives of the role.
+- `<prohibited_actions>`: **[CRITICAL]** List of [MUST] rules and forbidden operations.
+- `<linguistic_policy>`: Explicit statement of the English-internal/Japanese-external rule.
+
+### 8-2. Context Isolation Tags
+- `<target_task_card>`: Encapsulates the specific REQ/Task markdown content.
+- `<ssot_reference>`: Contains the Single Source of Truth (API specs, design docs).
+- `<execution_evidence>`: Isolates logs, error messages, and browser outputs.
+
+### 8-3. Workflow State Tags (Mandatory in global_workflows/*.md)
+- `<current_workflow>`: The name of the active workflow.
+- `<current_step>`: The active Phase and Step description.
+- `<workflow_instructions>`: Specific instructions for the current step.
+
+### 8-4. Reasoning & Output Control
+- `<thinking>`: **[MANDATORY for complex tasks]** Internal reasoning in English. Agents MUST use this tag to analyze situations before providing final results.
+- `<expected_deliverables>`: Defines the required output format and artifacts.
+
+### 8-5. Script I/O Protocol
+To ensure deterministic interaction between agents and automated tools, all script-mediated inputs and outputs SHOULD follow this structural protocol:
+- `<assigned_role>`: Used in model prompts to define the persona/identity of the processing model.
+- `<instruction_set>`: Encapsulates specific task instructions for the model.
+- `<target_content>` / `<source_code>`: Isolates the data being analyzed or processed.
+- `<linter_report>` / `<audit_findings>`: Used for validation or security scan results.
+- `<extraction_result>`: Used for code or metadata extracted from source files.
+
+### 8-6. Cross-Repository Dispatch Protocol (System SSoT)
+For tasks spanning multiple repositories, the `PBI-SYS` document acts as the machine-readable distribution source:
+- `<system_context>`: Common specifications and architectural context shared by all repositories.
+- `<dispatch_instructions>`: Encapsulates repository-specific requirements.
+    - `<frontend_pbi_spec>`: Content to be dispatched to the Frontend repository.
+    - `<backend_pbi_spec>`: Content to be dispatched to the Backend repository.
+- **[MUST]**: The `pbi_dispatcher.py` MUST extract these tags without modification to maintain SSoT integrity.

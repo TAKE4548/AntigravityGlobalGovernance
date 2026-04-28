@@ -60,8 +60,17 @@ def find_callers(root_dir, target_symbol):
     return callers
 
 if __name__ == "__main__":
-    if len(sys.argv) < 3:
-        print("Usage: code_analyzer.py <command> <root_dir> <symbol>")
+    if len(sys.argv) < 2 or sys.argv[1] in ["--help", "-h"]:
+        print("AntiGravity Code Analyzer")
+        print("Usage: python code_analyzer.py <command> <root_dir> <symbol>")
+        print("\nCommands:")
+        print("  callers <root> <symbol>     Find all calls to the specified symbol in Python files.")
+        print("  extract <root> <symbol>     Extract the full definition of the specified function or class.")
+        sys.exit(0)
+    
+    if len(sys.argv) < 4:
+        print("Error: Missing arguments.")
+        print("Usage: python code_analyzer.py <command> <root_dir> <symbol>")
         sys.exit(1)
     
     cmd = sys.argv[1]
@@ -80,10 +89,12 @@ if __name__ == "__main__":
         result = find_symbol_definition(root, symbol)
         if result:
             path, start, end, content = result
-            print(f"FILE: {path}")
-            print(f"RANGE: {start}-{end}")
-            print("CONTENT_START")
-            print(content)
-            print("CONTENT_END")
+            print("<extraction_result>")
+            print(f"  <file_path>{path}</file_path>")
+            print(f"  <line_range>{start}-{end}</line_range>")
+            print("  <source_code>")
+            print(content.strip())
+            print("  </source_code>")
+            print("</extraction_result>")
         else:
             print(f"Symbol '{symbol}' not found in {root}")

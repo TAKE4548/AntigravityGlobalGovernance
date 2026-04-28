@@ -1,48 +1,78 @@
 ---
-name: triage
 description: "Initial bug investigation and classification workflow. Command: /triage"
 ---
 
 # Bug Triage & Investigation Workflow (/triage)
 
-Use this workflow to identify the root cause of a bug and determine the next action. This workflow focuses strictly on investigation and prohibits any code modifications.
+<current_workflow>/triage</current_workflow>
+
+Use this workflow to identify the root cause of a bug and determine the next action.
 
 ## Step 0: Identity Activation [Role: Incident Analyst]
-- **[MUST [W-TR-0]]**: Read `${GLOBAL_SKILLS}\role-incident-analyst\SKILL.md` to load investigation protocols.
+
+<current_step>Step 0: Identity Activation</current_step>
+<workflow_instructions>
+1. Read `${GLOBAL_SKILLS}\role-incident-analyst\SKILL.md` to load investigation protocols.
+2. Initialize analysis in the `<thinking>` tag in English.
+</workflow_instructions>
+
+- **[MUST [W-TR-0]]**: Activate Incident Analyst identity.
 
 ## Step 1: Intake & Reproduction Check [Role: Incident Analyst]
-- Receive bug details (logs/screenshots/symptoms).
-- If information is insufficient, ask the user for clarification and STOP.
-- **[MUST [W-TR-1]]**: Document the reproduction steps clearly.
+
+<current_step>Step 1: Intake & Reproduction Check</current_step>
+<workflow_instructions>
+1. Collect symptoms, logs, and screenshots.
+2. Ask for clarification if details are missing.
+3. Document reproduction steps clearly.
+</workflow_instructions>
+
+- **Intake**: Receive bug details.
+- **Reproduction**: [MUST [W-TR-1]] Document exact steps to reproduce.
 
 ## Step 2: Deep Dive Analysis (Read-Only) [Role: Incident Analyst]
-- **[MUST [W-TR-2-1]]**: Use available analysis scripts (e.g., `${GLOBAL_SCRIPTS}\ollama_adapter.py`) to analyze logs or trace logic.
-- **[MUST [W-TR-2-2]]**: Use `code_analyzer.py` or strategic search (grep, ls) to locate the failure point.
-- **[PROHIBITED]**: Do NOT suggest any fixes or technical solutions at this stage. Focus strictly on "What is happening" vs "What should happen".
+
+<current_step>Step 2: Deep Dive Analysis (Read-Only)</current_step>
+<workflow_instructions>
+1. Run `ollama_adapter.py` on logs.
+2. Use `code_analyzer.py` for structural mapping.
+3. Use `view_file` for detailed verification.
+4. Use the `<thinking>` tag for logic tracing.
+</workflow_instructions>
+
+- **Structural Mapping**: Map affected symbols and call graphs.
+- **Detailed Verification**: Check line-level details.
+- **[PROHIBITED]**: DO NOT suggest fixes or technical solutions.
 
 ## Step 3: Root Cause Isolation & Classification [Role: Incident Analyst]
-- Pinpoint the exact file, line number, or configuration entry.
-- **[CRITICAL]** Classify the issue as:
-  - **Type A: Implementation Bug**: The code contradicts the SSoT (docs, specs). It is a developer mistake.
-  - **Type B: Specification Bug**: The code follows the SSoT, but the SSoT itself is flawed or missing logic.
+
+<current_step>Step 3: Root Cause Isolation & Classification</current_step>
+<workflow_instructions>
+1. Pinpoint the exact failure location.
+2. Classify as Type A (Implementation) or Type B (Specification) within the `<incident_report>` tag.
+</workflow_instructions>
+
+- **Isolation**: Pinpoint file, line, or configuration.
+- **Classification**: Distinguish between developer mistake and flawed logic.
 
 ## Step 4: Incident Report & Approval Gate [Role: Incident Analyst]
-- Create or update `docs/incident_report.md` (in Japanese) including:
-  - Symptom / Steps to Reproduce / Root Cause / Classification (Type A or B).
-- Present a summary in Japanese and ask for the next action:
-  - If Type A: "根本原因は実装ミスでした。バックログに登録して修正（/dev-design）へ進みますか？"
-  - If Type B: "仕様自体の改善が必要です。仕様を再定義するため /wish を実行しますか？"
-  - If spans multiple repos: "リポジトリ横断的な設計変更が必要です。/sys-design を実行しますか？"
-- **MANDATORY TURN-END**: Wait for user's YES/NO.
+
+<current_step>Step 4: Incident Report & Approval Gate</current_step>
+<workflow_instructions>
+1. Create/update `docs/incident_report.md` in Japanese.
+2. Present summary and ask for the next action (YES/NO).
+</workflow_instructions>
+
+- **Reporting**: Detail symptoms, steps, root cause, and classification.
+- **Gate**: Wait for user response before proceeding.
 
 ## Step 5: Backlog Registration & Routing [Role: Incident Analyst]
-- **If YES for Type A (Single Repo)**:
-  - Create/Update entry in `docs/backlog.md` with `Status: ready`.
-  - Inform: "バックログに登録しました。/dev-design を実行してください。"
-- **If YES for Type B**:
-  - Create/Update entry in `docs/backlog.md` with `Status: new`.
-  - Inform: "バックログに登録しました。仕様を再定義するため /wish を実行してください。"
-- **If Cross-Repo**:
-  - Update `docs/system/E2E_BACKLOG.md` or the master backlog.
-  - Inform: "リポジトリ横断課題として登録しました。/sys-design を実行してください。"
-- **If NO**: Acknowledge and END.
+
+<current_step>Step 5: Backlog Registration & Routing</current_step>
+<workflow_instructions>
+1. Register the PBI based on the user's choice.
+2. Instruct the user on which workflow to start next.
+</workflow_instructions>
+
+- **Registration**: Run `pbi_manager.py` to create the entry.
+- **Routing**: Direct to `/dev-design`, `/wish`, or `/sys-design`.

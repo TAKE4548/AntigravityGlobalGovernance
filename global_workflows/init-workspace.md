@@ -1,5 +1,4 @@
 ---
-name: init
 description: >
   Workspace initialization workflow.
   Places pointer files according to AntiGravity governance rules.
@@ -8,45 +7,43 @@ description: >
 
 # Workspace Initialization Workflow (/init)
 
-This workflow initializes a new workspace with AntiGravity governance "pointers" to ensure strict compliance with global rules.
+<current_workflow>/init</current_workflow>
+
+Initializes workspace with pointers to global governance.
 
 ## Step 1: Governance Setup
-- Create directory `.agents/rules/` if it doesn't exist.
-- Create `.agents/rules/governance.md` with the following content:
-  ```markdown
-  # Project Governance Pointer
 
-  This project is governed by the AntiGravity Global Governance standards.
-  
-  **CRITICAL**: All agents MUST strictly follow the rules defined in the global governance file:
-  - **Global Rules**: `${GLOBAL_GOVERNANCE}\GEMINI.md`
-  - **Shared Scripts**: `${GLOBAL_SCRIPTS}\` (Use absolute paths ONLY)
+<current_step>Step 1: Governance Setup</current_step>
+<workflow_instructions>
+1. Create `.agents/rules/governance.md` pointing to global standards.
+</workflow_instructions>
 
-  Any local rules in `.agents/` are supplementary and MUST NOT contradict the global governance.
-  ```
+- **Action**: Establish the connection to the global constitution.
 
 ## Step 2: Skill Pointer Generation
-- List all global skills in `${GLOBAL_SKILLS}\`.
-- For each directory `<skill-name>` in the global skills directory:
-  - Create directory `.agents/skills/<skill-name>/`.
-  - Create `.agents/skills/<skill-name>/SKILL.md` with a pointer to the global definition.
-  - **Format**:
-    ```markdown
-    ---
-    name: <skill-name>
-    description: "Pointer to global AntiGravity skill: <skill-name>"
-    ---
-    # <skill-name> (Global Pointer)
-    
-    This is a pointer to the global AntiGravity skill definition.
-    For the latest instructions and protocols, you MUST read the global file:
-    `file:///${GLOBAL_SKILLS}/<skill-name>/SKILL.md`
-    ```
+
+<current_step>Step 2: Skill Pointer Generation</current_step>
+<workflow_instructions>
+1. List global skills and create pointer files in the local workspace.
+</workflow_instructions>
+
+- **Action**: Connect local workspace to global expertise.
 
 ## Step 3: Project Conventions Template
-- If `.agents/skills/project-conventions/SKILL.md` does not exist:
-  - Create it as a template for project-specific rules, ensuring it also points back to the global governance.
+
+<current_step>Step 3: Project Conventions Template</current_step>
+<workflow_instructions>
+1. Create a local `SKILL.md` for project-specific rules if missing.
+</workflow_instructions>
+
+- **Action**: Initialize project-specific guardrails.
 
 ## Step 4: Verification
-- Verify that the `.agents` structure is correctly created.
-- Remind the agent to always use absolute paths for global scripts.
+
+<current_step>Step 4: Verification</current_step>
+<workflow_instructions>
+1. Verify structure and remind the user about absolute path requirements for global scripts.
+2. Output final status in Japanese.
+</workflow_instructions>
+
+- **Report**: Complete workspace initialization.

@@ -1,5 +1,4 @@
 ---
-name: sys-design
 description: >
   Cross-repository system design and API contract definition workflow.
   Drives detail through scouting existing code and proactive questioning.
@@ -8,35 +7,67 @@ description: >
 
 # System & API Design Workflow (/sys-design)
 
-An interactive workflow for establishing strict interface contracts and sequences across repositories. This workflow scouts existing code in FE/BE, refines specifications through questioning, and encapsulates the design into a System PBI with an integrated test plan.
+<current_workflow>/sys-design</current_workflow>
+
+An interactive workflow for establishing strict interface contracts and sequences across repositories.
 
 ## Step 0: Identity Activation [Role: System Architect]
-- **[MUST [W-SD-0]]**: Read `${GLOBAL_SKILLS}\role-system-architect\SKILL.md` to load cross-repo design and orchestration protocols.
+
+<current_step>Step 0: Identity Activation</current_step>
+<workflow_instructions>
+1. Read `${GLOBAL_SKILLS}\role-system-architect\SKILL.md` to load protocols.
+2. Initialize thinking process in English.
+</workflow_instructions>
+
+- **[MUST [W-SD-0]]**: Activate System Architect identity and load constraints.
 
 ## Step 1: Requirement Intake & Scouting [Role: System Architect]
-- Receive broad goals or user flows.
-- **[STRICT] Scouting Phase**: Perform a deterministic extraction of existing specifications and types using `scout_adapter.py`.
-  - **Overview**: `python ${GLOBAL_SCRIPTS}\scout_adapter.py --mode outline --target ../frontend,../backend`
-  - **Drill-down**: Use `--mode drill-down` for specific files if investigating a bug or complex logic.
-- Based on the scouting, identify the impact on existing `openapi.yaml` or state management.
+
+<current_step>Step 1: Requirement Intake & Scouting</current_step>
+<workflow_instructions>
+1. Receive broad goals and perform a deterministic extraction using `scout_adapter.py`.
+2. Analyze existing specifications and types across frontend/backend.
+3. Identify impact on `openapi.yaml` within the `<thinking>` tag.
+</workflow_instructions>
+
+- **Scouting Phase**: Use `scout_adapter.py` to outline FE/BE specifications.
+- **Impact Identification**: Identify changes required in state management or API contracts.
 
 ## Step 2: Deep Dive Phase (Resolution Improvement) [Role: System Architect]
-- Refine specifications through sharp technical questioning:
-  1. **SSoT & State Management**: Which side owns the master data?
-  2. **API Boundaries**: Synchronous (REST) or Asynchronous?
-  3. **Payload Structure**: Specific properties in JSON Request/Response.
-  4. **Error Handling**: Validation errors and timeout behaviors.
+
+<current_step>Step 2: Deep Dive Phase (Resolution Improvement)</current_step>
+<workflow_instructions>
+1. Refine specifications through sharp technical questioning (SSoT, State, Boundaries, Payloads, Errors).
+2. Use the `<thinking>` tag to analyze sequence logic and interface boundaries.
+</workflow_instructions>
+
+- **Technical Questioning**: Define data ownership, API boundaries, and payload structures.
+- **Detail Demand**: Refuse implementation plan creation until resolution is high.
 
 ## Step 3: PBI-SYS Design & BA-Audit [Role: System Architect]
-- Create the System PBI encapsulation: `docs/design/PBI-SYS-[REQ_ID].md`.
-- **[MUST [SD-PROC]] Strict Generation Procedure**:
-  1. **Format**: Initialize the file using `pbi_manager.py create-template`.
-  2. **Content**: Define API contracts, domain models, and the **Integrated Test Plan (E2E Scenarios)**.
-  3. **BA-Audit**: Run `python ${GLOBAL_SCRIPTS}\ollama_adapter.py ba-audit --target docs/design/PBI-SYS-[REQ_ID].md`.
-  4. **Reflection**: Fix any ambiguities or missing edge cases identified by the audit.
-  5. **Final Check**: Ensure all Acceptance Criteria (AC) are covered.
 
-## Step 4: Consensus & Implementation Plan
-- Present the system architecture and flow drafts to the user.
-- Once agreed, create the `implementation_plan.md` in Japanese.
-- **Note**: Do NOT modify FE/BE code at this stage. Only `openapi.yaml` in the System repo may be planned for modification.
+<current_step>Step 3: PBI-SYS Design & BA-Audit</current_step>
+<workflow_instructions>
+- [ ] **Step 3-2: Create PBI-SYS**
+    - Create `docs/design/PBI-SYS-[REQ_ID].md`.
+    - **[MUST]** Use XML tags for distribution:
+        - `<system_context>`: Common specs.
+        - `<frontend_pbi_spec>`: FE requirements.
+        - `<backend_pbi_spec>`: BE requirements.
+    - Reference: `GEMINI.md#8-6`.
+3. Run `ollama_adapter.py ba-audit` and reflect findings.
+</workflow_instructions>
+
+- **Design Creation**: Initialize and populate the System PBI.
+- **BA-Audit**: Obtain objective feedback on design ambiguities and fix them.
+
+## Step 4: Consensus & Implementation Plan [Role: System Architect]
+
+<current_step>Step 4: Consensus & Implementation Plan</current_step>
+<workflow_instructions>
+1. Present the system architecture and flow drafts to the user.
+2. Create the `implementation_plan.md` in Japanese after consensus.
+</workflow_instructions>
+
+- **Consensus**: Ensure the user approves the overall architecture.
+- **Implementation Planning**: Define the roadmap for System-repo modifications and cross-repo dispatch.

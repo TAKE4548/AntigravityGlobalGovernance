@@ -1,39 +1,65 @@
 ---
-name: agent-fix
 description: "Workflow for addressing agent performance issues, rule violations, or creating new roles. Command: /agent-fix"
 ---
 
 # Agent Improvement Workflow (/agent-fix)
 
-Use this workflow when the agent system is underperforming, breaking rules, or needs new specialized roles.
+<current_workflow>/agent-fix</current_workflow>
+
+Use this workflow for agent system maintenance, rule updates, or new role creation.
 
 ## Step 0: Identity Activation [Role: Agent Architect]
-- **[MUST [W-AF-0]]**: Read `${GLOBAL_SKILLS}\role-agent-architect\SKILL.md` to load governance and meta-programming protocols.
+
+<current_step>Step 0: Identity Activation</current_step>
+<workflow_instructions>
+1. Read `${GLOBAL_SKILLS}\role-agent-architect\SKILL.md`.
+2. Initialize meta-analysis in the `<thinking>` tag in English.
+</workflow_instructions>
+
+- **[MUST [W-AF-0]]**: Activate Agent Architect identity.
 
 ## Step 1: Intake & Analysis [Role: Agent Architect]
-- **Intake**: Read the provided items.
-  - **Token Saving**: If `overview.txt` is large, use the local model (Gemma4) to generate an initial summary/incident report.
-  - Read artifacts (`task.md`, `walkthrough.md`).
-- **Analysis**: 
-  - **Identify Incident**: Specify at least one Conversation ID and Turn/Message where the issue occurred.
-  - Identify where the agent deviated from the workflow.
-  - Identify which role's definition was too vague.
-  - Identify framework constraints (e.g., Streamlit/FastAPI side effects) that were ignored.
-- **Output**: A summary in Japanese of "What went wrong" and "Why the current rules failed," referencing the specific incident.
+
+<current_step>Step 1: Intake & Analysis</current_step>
+<workflow_instructions>
+1. Identify the specific incident (Conversation ID/Turn).
+2. Analyze deviation from rules or workflow.
+3. Output summary of failure in Japanese.
+</workflow_instructions>
+
+- **Incident Identification**: Pinpoint where the agent deviated.
+- **Root Cause**: Explain why current rules or role definitions failed.
 
 ## Step 2: Design & Planning [Role: Agent Architect]
-- **Design**: Propose specific diffs for files in `.agents/skills/` or `.agents/workflows/`.
-- **Linguistic Gatekeeping**: **[MUST [W-AF-2]]**: Ensure all internal instructions (SKILL.md, workflow.md) are in English, while all user-facing outputs are in Japanese. DO NOT mix languages in the same section.
-- **Integration Plan**: If new tools/linters are created, explicitly state how they will be integrated into standard workflows (e.g., `dev.md`).
-- Create `implementation_plan.md` (in Japanese) explaining the rationale for the upgrade.
-- **MANDATORY TURN-END**: Wait for user approval.
+
+<current_step>Step 2: Design & Planning</current_step>
+<workflow_instructions>
+1. Propose specific diffs for skills or workflows.
+2. Maintain strict linguistic policy (Internal: English, External: Japanese).
+3. Create `implementation_plan.md` and wait for approval.
+</workflow_instructions>
+
+- **Design**: Craft guardrails to prevent recurrence.
+- **Planning**: Define rationale and integration steps.
 
 ## Step 3: Execution & Verification [Role: Agent Architect]
-- **Execution**: Apply the approved changes to the `.agents/` directory.
-- **Cleanup**: Audit related skill files and remove redundant or conflicting instructions.
-- **Synchronization**: Update standard workflows (e.g., `dev.md`) to integrate new changes.
-- **Verification**: Simulate or walk through how the new rule would have prevented the failure identified in Step 1.
-- **Commit**: Prefix the commit message with `meta: Agent upgrade vX.Y`.
+
+<current_step>Step 3: Execution & Verification</current_step>
+<workflow_instructions>
+1. Apply changes to the governance directory.
+2. Audit related skills and sync workflows.
+3. Simulate verification of the new guardrails.
+</workflow_instructions>
+
+- **Execution**: Apply approved modifications.
+- **Verification**: Demonstrate how the new rule prevents identified failures.
 
 ## Step 4: Summary [Role: Agent Architect]
-- **Final Report**: Present a `walkthrough.md` (in Japanese) explaining the "New Guardrails" added to the system.
+
+<current_step>Step 4: Summary</current_step>
+<workflow_instructions>
+1. Present the `walkthrough.md` in Japanese.
+2. Highlight the "New Guardrails" added.
+</workflow_instructions>
+
+- **Reporting**: Finalize the governance upgrade.

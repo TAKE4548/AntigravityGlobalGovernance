@@ -8,9 +8,11 @@ def main():
     
     args = parser.parse_args()
     
-    print(f"# Scout Report ({args.mode})")
-    print(f"Target: {args.target}")
-    print("\n[INFO] This is a placeholder for the scout_adapter.py.")
+    print("<scout_result>")
+    print(f"  <mode>{args.mode}</mode>")
+    print(f"  <target>{args.target}</target>")
+    print("  <report_content>")
+    print("[INFO] This is a placeholder for the scout_adapter.py.")
     print("In production, this would use AST parsing to extract types and API summaries.")
     
     if args.mode == "outline":
@@ -18,6 +20,8 @@ def main():
         print("- Found Type: UserProfile")
     elif args.mode == "drill-down":
         print("Detailed logic analysis for target...")
+    print("  </report_content>")
+    print("</scout_result>")
 
 if __name__ == "__main__":
     main()

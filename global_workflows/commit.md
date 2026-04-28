@@ -1,31 +1,48 @@
 ---
-name: commit
 description: "Cross-repository commit workflow with security guardrails. Command: /commit"
 ---
 
 # Commit Workflow (/commit)
 
-Use this workflow to safely commit changes after a security audit.
+<current_workflow>/commit</current_workflow>
+
+Safely commit changes after a security audit and AC verification.
 
 ## Step 1: Security Audit
-- **Action**: Run the pre-commit linter to check for absolute paths and secrets.
-- **Command**: `python ${GLOBAL_SCRIPTS}\pre_commit_linter.py .`
-- **Error Handling**: If the command fails (exit code 1), STOP and report the specific file and line to the user. DO NOT proceed to commit.
+
+<current_step>Step 1: Security Audit</current_step>
+<workflow_instructions>
+1. Run `pre_commit_linter.py` to check for absolute paths and secrets.
+2. Halt if violations are found and report in the `<execution_evidence>` tag.
+</workflow_instructions>
+
+- **Action**: Perform deterministic scan.
+- **Error Handling**: STOP and report specific violations to the user.
 
 ## Step 2: Verification
-- **Audit Table**: Ensure the `walkthrough.md` contains the AC compliance table as per `GEMINI.md`.
+
+<current_step>Step 2: Verification</current_step>
+<workflow_instructions>
+1. Ensure `walkthrough.md` contains the mandatory AC compliance table.
+2. Verify table integrity in the `<thinking>` tag.
+</workflow_instructions>
+
+- **Audit**: Confirm documentation meets governance standards.
 
 ## Step 3: Execution
-- **Action**: Stage files and commit with a structured message.
-- **Commands**:
-    - `git add .`
-    - `git commit -m "<type>(<scope>): <subject>"`
-- **Message Convention**:
-    - `feat`: New feature
-    - `fix`: Bug fix
-    - `docs`: Documentation only changes
-    - `refactor`: Code change that neither fixes a bug nor adds a feature
-    - `meta`: Agent governance or workflow changes
+
+<current_step>Step 3: Execution</current_step>
+<workflow_instructions>
+1. Stage files and commit with a structured message (`feat`, `fix`, `docs`, `refactor`, `meta`).
+</workflow_instructions>
+
+- **Commands**: `git add .` and `git commit -m "..."`.
 
 ## Step 4: Summary
-- **Report**: Confirm the commit hash and the result of the security scan.
+
+<current_step>Step 4: Summary</current_step>
+<workflow_instructions>
+1. Confirm commit hash and scan results in Japanese.
+</workflow_instructions>
+
+- **Report**: Finalize the commit process.

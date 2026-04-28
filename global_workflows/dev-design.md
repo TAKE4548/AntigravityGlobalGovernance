@@ -4,41 +4,72 @@ description: "Architectural design and task decomposition phase. Command: /dev-d
 
 # Development Workflow: Design Phase (/dev-design)
 
+<current_workflow>/dev-design</current_workflow>
+
 Use this workflow to perform architectural design and task decomposition based on SSoT (Single Source of Truth) principles.
 
 ## Phase 0: Identity Activation [Role: Architect]
-- **[MUST [W-DD-0]]**: Read `${GLOBAL_SKILLS}\role-architect\SKILL.md` to load role-specific instructions and constraints.
+
+<current_step>Phase 0: Identity Activation</current_step>
+<workflow_instructions>
+1. Read `${GLOBAL_SKILLS}\role-architect\SKILL.md` to load instructions.
+2. Initialize thinking process in English.
+</workflow_instructions>
+
+- **[MUST [W-DD-0]]**: Activate the Architect identity and load constraints.
 
 ## Phase 1: Environment Audit & Requirement Intake [Role: Architect]
+
+<current_step>Phase 1: Environment Audit & Requirement Intake</current_step>
+<workflow_instructions>
+1. Run `pbi_manager.py list-ready` to present candidates.
+2. Run `env_check.py` and check `.agents/context.md`.
+3. Load the target PBI and analyze it within the `<thinking>` tag.
+</workflow_instructions>
+
 - **Item Selection**: Run `python ${GLOBAL_SCRIPTS}\pbi_manager.py list-ready`.
-    - **[MANDATORY TURN-END]**: Present the list to the user in Japanese and ask which PBI ID to proceed with. DO NOT proceed to Phase 2 until the user responds.
+    - **[MANDATORY TURN-END]**: Present the list to the user and ask for the PBI ID.
 - **Environment Check**: Run `python ${GLOBAL_SCRIPTS}\env_check.py`.
-    - **[LOCAL OVERRIDE]**: Check `.agents/context.md` at the repository root.
 - **Requirement Verification**: Load the target PBI file from `docs/backlog/pbi/active/<PBI_ID>.md`.
 
 ## Phase 2: Detailed Design [Role: Architect]
+
+<current_step>Phase 2: Detailed Design</current_step>
+<workflow_instructions>
+1. Build/update `docs/design/<PBI_ID>.md`.
+2. Run `doc_mapper.py` for SSoT impact analysis.
+3. Use `openapi_parser.py` for surgical API extraction.
+4. Document the design and test plan using the `<ssot_reference>` and `<thinking>` tags.
+</workflow_instructions>
+
 - **Design Creation**: Build or update `docs/design/<PBI_ID>.md`.
-    - **[SSoT Impact Analysis]**: Run `python ${GLOBAL_SCRIPTS}\doc_mapper.py docs/ <related_source_path>` to identify any existing common documentation that requires updates.
-    - **API Reference (Surgical Extraction)**:
-        1. Run `python ${GLOBAL_SCRIPTS}\openapi_parser.py ${API_SPEC_PATH} list-endpoints` to identify target endpoints.
-        2. Run `python ${GLOBAL_SCRIPTS}\openapi_parser.py ${API_SPEC_PATH} get-endpoint <path> <method>` to extract the full definition (including resolved $refs).
-        3. **[TOKEN OPTIMIZATION]**: Embed only the extracted snippets into the Task Card.
-- **Verification Design**: Create or update `docs/design/<PBI_ID>-test-plan.md`.
-    - **[STRICT FORMAT]**: The test plan MUST NOT contain qualitative manual steps. It MUST consist of explicit CLI commands (`npm test`, `pytest`) and assertions based on exact values, DOM selectors, or console logs.
+- **SSoT Impact Analysis**: Run `doc_mapper.py` to identify required document updates.
+- **API Reference**: Use `openapi_parser.py` to extract resolved endpoints.
+- **Verification Design**: Create or update `docs/design/<PBI_ID>-test-plan.md` with explicit CLI commands.
 
 ## Phase 3: Task Decomposition & Planning [Role: Architect]
-- **Scaffolding**: Run `python ${GLOBAL_SCRIPTS}\pbi_manager.py init-task <PBI_ID> --symbol <TargetSymbol>` and `init-test-plan <PBI_ID>`.
-- **Atom-sized Constraint**: Each task MUST be small enough to modify a **maximum of 3 source files**.
-- **[MANDATORY ENCAPSULATION]**: Embed all necessary logic, type definitions, and code snippets from related files into the task card. The Engineer MUST be able to implement without opening the PBI spec or searching for type definitions.
-- **[MUST EXTRACT]**: Architect MUST use `read_file` or `code_analyzer.py` to physically read the target source code and type definitions BEFORE writing the Task Card. Do not hallucinate code snippets.
-- **Implementation Planning**: Create `implementation_plan.md` in **Japanese** to present:
-    1. Proposed architectural changes and the breakdown of tasks.
-2. **[MANDATORY] Impacted Documents List**: List docs identified by `doc_mapper.py`.
+
+<current_step>Phase 3: Task Decomposition & Planning</current_step>
+<workflow_instructions>
+1. Run `pbi_manager.py init-task` and `init-test-plan`.
+2. Ensure each task is atom-sized (max 3 files).
+3. Embed all necessary context into Task Cards (No manual search allowed for Engineer).
+4. Create the `implementation_plan.md` in Japanese.
+</workflow_instructions>
+
+- **Scaffolding**: Run `pbi_manager.py` to initialize tasks and test plans.
+- **[MANDATORY ENCAPSULATION]**: Embed all logic, types, and snippets into the Task Card.
+- **Implementation Planning**: Create `implementation_plan.md` in Japanese including architectural changes and impacted docs.
 
 ## Phase 4: Pre-Audit & Hand-off [Role: Architect]
-- **Ollama Audit (Engineer View)**: Run `python ${GLOBAL_SCRIPTS}\ollama_adapter.py engineer-audit docs/backlog/task/active/<PBI_ID>.md`.
-- **Ollama Audit (QA View)**: Run `python ${GLOBAL_SCRIPTS}\ollama_adapter.py qa-audit docs/design/PBI-<PBI_ID>-test-plan.md`.
-- **Feedback Loop**: Apply feedback from audits to the task card and test plan.
-- **Governance Check**: Run `python ${GLOBAL_SCRIPTS}\artifact_linter.py docs/`.
-- **Audit**: Run `python ${GLOBAL_SCRIPTS}\workflow_validator.py design-end <PBI_ID>`.
-- **Status Update**: instruct the user to start implementation via `/dev-task`.
+
+<current_step>Phase 4: Pre-Audit & Hand-off</current_step>
+<workflow_instructions>
+1. Run `ollama_adapter.py` for engineer-audit and qa-audit.
+2. Run `artifact_linter.py` and `workflow_validator.py`.
+3. Inform the user to start `/dev-task`.
+</workflow_instructions>
+
+- **Ollama Audit**: Run audits to verify Task Card and Test Plan quality.
+- **Governance Check**: Run `artifact_linter.py` and `workflow_validator.py`.
+- **Status Update**: Instruct the user to proceed to `/dev-task`.
