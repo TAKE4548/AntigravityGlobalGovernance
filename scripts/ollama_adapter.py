@@ -189,6 +189,7 @@ if __name__ == "__main__":
         print("  engineer-audit <task_file>   Check if a task card is self-contained and implementable.")
         print("  qa-audit <test_plan>         Check if a test plan is executable and non-ambiguous.")
         print("  sec-audit <path>             Scan for credentials, PII, or absolute paths (JSON output).")
+        print("  refactor-audit <path>        Scan code for AI-efficiency refactoring (JSON output).")
         print("  synthesize \"<raw_text>\"      Synthesize multiple analysis results into a context snippet.")
         sys.exit(0)
     
@@ -290,4 +291,46 @@ if __name__ == "__main__":
             except Exception:
                 pass # Skip if unparseable
 
+        print(json.dumps(all_findings, indent=2, ensure_ascii=False))
+    elif action == "refactor-audit":
+        if not arg or not os.path.exists(arg):
+            print(f"File not found or not provided: {arg}")
+            sys.exit(1)
+        
+        try:
+            with open(arg, "r", encoding="utf-8") as f:
+                lines = f.readlines()
+        except Exception as e:
+            print(f"Error reading file {arg}: {e}")
+            sys.exit(1)
+
+        system_prompt = (
+            "You are an AI-Native Refactor Expert. Scan the code for: "
+            "1. Functions/Files too large for AI context. "
+            "2. Missing type hints or ambiguous logic causing hallucination. "
+            "3. Redundant code increasing token cost. "
+            "Output MUST be JSON: [{'line': int, 'type': 'Maintainability|AI-Efficiency|Complexity', 'description': 'Japanese text', 'priority': 'High|Medium|Low'}]"
+        )
+
+        # Refactor audit uses 300 line chunks as requested
+        CHUNK_SIZE_LINES = 300
+        all_findings = []
+        
+        for i in range(0, len(lines), CHUNK_SIZE_LINES):
+            chunk = lines[i:i+CHUNK_SIZE_LINES]
+            # Add line numbers for the model to reference
+            chunk_content = "".join([f"{i + idx + 1}: {line}" for idx, line in enumerate(chunk)])
+            
+            prompt = f"Scan the following code for refactoring opportunities:\n\n{chunk_content}"
+            response = query_ollama(prompt, system_prompt, model=AUDIT_MODEL_ID)
+            
+            try:
+                import re
+                json_match = re.search(r'\[.*\]', response, re.DOTALL)
+                if json_match:
+                    findings = json.loads(json_match.group(0))
+                    all_findings.extend(findings)
+            except Exception:
+                pass # Skip if unparseable
+        
         print(json.dumps(all_findings, indent=2, ensure_ascii=False))

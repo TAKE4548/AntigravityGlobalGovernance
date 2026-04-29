@@ -35,10 +35,10 @@ def main():
     for target in targets:
         spec = None
         repo_type = ""
-        if "frontend" in target.lower():
+        if "frontend" in target.lower() or "client" in target.lower():
             spec = frontend_spec
             repo_type = "Frontend"
-        elif "backend" in target.lower():
+        elif "backend" in target.lower() or "server" in target.lower():
             spec = backend_spec
             repo_type = "Backend"
             
